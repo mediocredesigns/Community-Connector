@@ -1,0 +1,113 @@
+<form id="userForm" class="my-profile_form-block">
+	<div class="my-profile_form">
+		<div class="form_field-wrapper">
+			<label for="name" class="form_field-label">Name</label>
+			<input
+				type="text"
+				class="form_input-2"
+				id="name"
+				name="name"
+				placeholder="Name"
+				required />
+		</div>
+		<div class="form_field-wrapper">
+			<label for="email" class="form_field-label">Email</label>
+			<input
+				type="text"
+				class="form_input-2"
+				id="email"
+				name="email"
+				placeholder="Email" />
+		</div>
+		<div class="form_field-wrapper">
+			<label for="phone" class="form_field-label">phone</label>
+			<input
+				type="text"
+				class="form_input-2"
+				id="phone"
+				name="phone"
+				placeholder="Optional" />
+		</div>
+		<div class="form_field-wrapper" id="filterOneWrapper">
+			<label for="FilterOne" id="filterOneLabel" class="form_field-label"
+				>FilterOne</label
+			>
+			<input
+				type="text"
+				class="form_input-2"
+				id="filterOne"
+				name="filterOne"
+				placeholder="Optional" />
+		</div>
+		<div class="form_field-wrapper" id="filterTwoWrapper">
+			<label for="filterTwo" id="filterTwoLabel" class="form_field-label"
+				>FilterTwo</label
+			>
+			<input
+				type="text"
+				class="form_input-2"
+				id="filterTwo"
+				name="filterTwo"
+				placeholder="Optional" />
+		</div>
+		<div class="form_field-wrapper">
+			<label for="preferences" class="form_field-label">Preferences</label>
+			<textarea
+				name="preferences"
+				maxlength="5000"
+				id="preferences"
+				placeholder="List any carpool needs, availability, or any other information you'd like to share here."
+				class="form_input is-text-area"></textarea>
+		</div>
+		<div class="form_checkbox">
+			<label class="switch">
+				<input
+					type="checkbox"
+					id="includedMap"
+					name="includedMap"
+					value="yes" />
+				<span class="slider round"></span>
+				<p>Include my information on my Community Map</p>
+			</label>
+		</div>
+		<div class="form_checkbox">
+			<label class="switch">
+				<input
+					type="checkbox"
+					id="includedDirectory"
+					name="includedDirectory"
+					value="yes" />
+				<span class="slider round"></span>
+				<p>Include my information in my Community Directory</p>
+			</label>
+		</div>
+		<div class="form_field-wrapper hide">
+			<label for="lat" class="form_field-label">Lat</label>
+			<input
+				type="text"
+				class="form_input-2"
+				id="lat"
+				name="lat"
+				placeholder="lat"
+				required />
+		</div>
+		<div class="form_field-wrapper hide">
+			<label for="lng" class="form_field-label">lng</label>
+			<input
+				type="text"
+				class="form_input-2"
+				id="lng"
+				name="lng"
+				placeholder="lng"
+				required />
+		</div>
+		<div class="spacer-medium"></div>
+		<div class="button-group is-right">
+			<a href="/app" class="button is-secondary">Go to App</a>
+			<button class="button" type="submit">Update Profile</button>
+			<div id="updatedText" class="updated-text">
+				Profile Successfully Updated!
+			</div>
+		</div>
+	</div>
+</form>

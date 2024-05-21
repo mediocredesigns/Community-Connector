@@ -1,0 +1,13 @@
+// import { buildMap } from "./build.js";
+// import { fetchData } from "./fetch.js";
+import { fetchData } from "./fetch.js";
+import { loadMap } from "./loadMap.js";
+
+window.Webflow ||= [];
+window.Webflow.push(() => {
+	init();
+});
+
+async function init() {
+	loadMap();
+}
