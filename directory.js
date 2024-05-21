@@ -143,7 +143,7 @@ searchForm.addEventListener("submit", function (e) {
 
 filterInput.addEventListener("input", function () {
 	let filteredData = [];
-	const filterValue = filterInput.value;
+	const filterValue = filterInput.value.toLowerCase();
 	filteredData = fullData.filter(
 		(item) =>
 			item.name.toLowerCase().includes(filterValue) ||

@@ -16,8 +16,8 @@ document
 
 		// Get form data
 		const formData = new FormData(event.target);
-		const email = formData.get("login-email");
-		const password = formData.get("login-password");
+		const email = document.getElementById("email").value;
+		const password = document.getElementById("password").value;
 
 		// Construct the request body
 		const requestBody = {

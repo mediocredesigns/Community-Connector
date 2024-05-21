@@ -57,7 +57,7 @@ function updateProfile(user) {
 	let loader = document.getElementById("loadingFill");
 	let name = document.getElementById("name");
 	name.value = user.name;
-	let email = document.getElementById("email");
+	let email = document.getElementById("email-profile");
 	email.value = user.email;
 	let preferences = document.getElementById("preferences");
 	if (user.preference) preferences.value = user.preference;
