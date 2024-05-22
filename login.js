@@ -7,8 +7,6 @@ window.onload = function () {
 	}
 };
 
-console.log("loaded");
-
 document
 	.getElementById("login-form")
 	.addEventListener("submit", function (event) {

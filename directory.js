@@ -58,6 +58,7 @@ function getUsers(orgFilter) {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
+				Authorization: localStorage.authToken,
 			},
 		}
 	)
