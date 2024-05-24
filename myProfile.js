@@ -1,12 +1,9 @@
-window.onload = function () {
-	if (localStorage.authToken == null) {
-		alert("You are not logged in");
-		window.location.href = "/";
-	} else {
-		toggleButtons();
-		sendToXano();
-	}
-};
+if (localStorage.authToken) {
+	sendToXano();
+} else {
+	alert("You must be logged in to access this page");
+	window.location.href = "/";
+}
 
 const logOutBtn = document.getElementById("logout-button");
 
@@ -174,61 +171,17 @@ document
 		})
 			.then((response) => {
 				let textElement = document.getElementById("updatedText");
-				textElement.style.display = "block"; // Display the text
+				textElement.style.opacity = 1; // Display the text
 				setTimeout(function () {
-					textElement.style.display = "none"; // Hide the text after 5 seconds
-				}, 5000); // 5000 milliseconds = 5 seconds
+					textElement.style.opacity = 0; // Hide the text after 5 seconds
+				}, 3000); // 5000 milliseconds = 5 seconds
 
 				console.log("response", response);
 			})
 			.catch((error) => {
 				// Handle error
 			});
-
-		// fetch(`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/user/${user.id}`, {
-		// 	method: "POST",
-		// 	headers: {
-		// 		"Content-Type": "application/json",
-		// 	},
-		// 	body: JSON.stringify(formData),
-		// })
-		// 	.then((response) => {
-		// 		console.log("response", response);
-		// 		if (response.ok) {
-		// 			return response.json();
-		// 		} else {
-		// 			alert(
-		// 				"Request not completed - make sure password has both letters and numbers."
-		// 			);
-		// 			throw new Error("Something went wrong with the request.");
-		// 		}
-		// 	})
-		// 	.then((data) => {
-		// 		if (!data) {
-		// 			console.log("NULL DATA");
-		// 			alert("Organization and/or Passkey are incorrect");
-		// 		} else {
-		// 			console.log(data);
-		// 		}
-		// 	})
-		// 	.catch((error) => console.error("Error:", error));
 	});
-function toggleButtons() {
-	const signUp_button = document.getElementById("sign-up_button");
-	const logIn_button = document.getElementById("log-in_button");
-	const logIn_buttonMobile = document.getElementById("log-in_button-mobile");
-
-	const myProfile_button = document.getElementById("my-profile_button");
-	const map_button = document.getElementById("map_button");
-	const directory_button = document.getElementById("directory_button");
-
-	signUp_button.classList.toggle("hide");
-	logIn_button.classList.toggle("hide");
-	myProfile_button.classList.toggle("hide");
-	map_button.classList.toggle("hide");
-	directory_button.classList.toggle("hide");
-	logIn_buttonMobile.classList.toggle("hide");
-}
 
 logOutBtn.addEventListener("click", () => {
 	console.log("click");

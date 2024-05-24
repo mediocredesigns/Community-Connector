@@ -1,13 +1,11 @@
-window.onload = function () {
-	if (localStorage.authToken == null) {
-		alert("You are not logged in");
-		window.location.href = "/";
-	} else {
-		console.log(localStorage.authToken);
-		toggleButtons();
-		getUser();
-	}
-};
+//this is the second script
+
+if (localStorage.authToken) {
+	getUser();
+} else {
+	alert("You must be logged in to access this page");
+	window.location.href = "/";
+}
 
 let orglat, orglng, orgTitle;
 
@@ -41,6 +39,8 @@ async function getUser() {
 			getUsers(orgFilter);
 		})
 		.catch((error) => {
+			alert("Invalid Authorization");
+			window.location.href = "/";
 			console.error("There was a problem with the fetch operation:", error);
 		});
 }
@@ -116,21 +116,4 @@ function loadMap(users) {
 
 		newMaker.addTo(map).bindPopup(popUpinsert);
 	});
-}
-
-function toggleButtons() {
-	const signUp_button = document.getElementById("sign-up_button");
-	const logIn_button = document.getElementById("log-in_button");
-	const logIn_buttonMobile = document.getElementById("log-in_button-mobile");
-
-	const myProfile_button = document.getElementById("my-profile_button");
-	const map_button = document.getElementById("map_button");
-	const directory_button = document.getElementById("directory_button");
-
-	signUp_button.classList.toggle("hide");
-	logIn_button.classList.toggle("hide");
-	myProfile_button.classList.toggle("hide");
-	map_button.classList.toggle("hide");
-	directory_button.classList.toggle("hide");
-	logIn_buttonMobile.classList.toggle("hide");
 }

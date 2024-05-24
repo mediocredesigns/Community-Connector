@@ -23,8 +23,6 @@ document
 			password: password,
 		};
 
-		console.log(requestBody);
-
 		// Make the fetch request
 		fetch("https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/login", {
 			method: "POST",
@@ -111,13 +109,11 @@ function toggleButtons() {
 	const logIn_buttonMobile = document.getElementById("log-in_button-mobile");
 
 	const myProfile_button = document.getElementById("my-profile_button");
-	const map_button = document.getElementById("map_button");
-	const directory_button = document.getElementById("directory_button");
+	const app_button = document.getElementById("app_button");
 
 	signUp_button.classList.toggle("hide");
 	logIn_button.classList.toggle("hide");
 	myProfile_button.classList.toggle("hide");
-	map_button.classList.toggle("hide");
-	directory_button.classList.toggle("hide");
+	app_button.classList.toggle("hide");
 	logIn_buttonMobile.classList.toggle("hide");
 }

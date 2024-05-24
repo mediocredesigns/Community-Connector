@@ -1,13 +1,6 @@
-window.onload = function () {
-	if (localStorage.authToken == null) {
-		alert("You are not logged in");
-		window.location.href = "/";
-	} else {
-		console.log(localStorage.authToken);
-		toggleButtons();
-		getUser();
-	}
-};
+if (localStorage.authToken) {
+	getUser();
+}
 
 let orgInfo;
 
@@ -233,20 +226,3 @@ filterInput.addEventListener("input", function () {
 
 	loadDirectory(filteredData);
 });
-
-function toggleButtons() {
-	const signUp_button = document.getElementById("sign-up_button");
-	const logIn_button = document.getElementById("log-in_button");
-	const logIn_buttonMobile = document.getElementById("log-in_button-mobile");
-
-	const myProfile_button = document.getElementById("my-profile_button");
-	const map_button = document.getElementById("map_button");
-	const directory_button = document.getElementById("directory_button");
-
-	signUp_button.classList.toggle("hide");
-	logIn_button.classList.toggle("hide");
-	myProfile_button.classList.toggle("hide");
-	map_button.classList.toggle("hide");
-	directory_button.classList.toggle("hide");
-	logIn_buttonMobile.classList.toggle("hide");
-}
