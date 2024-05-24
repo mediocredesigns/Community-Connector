@@ -106,6 +106,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	function toggleButtons() {
 		const signUp_button = document.getElementById("sign-up_button");
 		const logIn_button = document.getElementById("log-in_button");
+		const logIn_buttonMobile = document.getElementById("log-in_button-mobile");
+
 		const myProfile_button = document.getElementById("my-profile_button");
 		const map_button = document.getElementById("map_button");
 		const directory_button = document.getElementById("directory_button");
@@ -115,5 +117,6 @@ document.addEventListener("DOMContentLoaded", function () {
 		myProfile_button.classList.toggle("hide");
 		map_button.classList.toggle("hide");
 		directory_button.classList.toggle("hide");
+		logIn_buttonMobile.classList.toggle("hide");
 	}
 });

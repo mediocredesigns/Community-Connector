@@ -31,8 +31,12 @@ async function getUser() {
 			orglat = data._organization.orgLat;
 			orglng = data._organization.orgLng;
 			orgTitle = data._organization.OrgName;
-			orgTitle = orgTitle[0].toUpperCase() + orgTitle.slice(1);
+			orgTitle = orgTitle
+				.split(" ")
+				.map((word) => word[0].toUpperCase() + word.slice(1))
+				.join(" ");
 			document.getElementById("orgTitle").innerText = orgTitle;
+
 			// console.log(orgLat, orgLng);
 			getUsers(orgFilter);
 		})
@@ -117,6 +121,8 @@ function loadMap(users) {
 function toggleButtons() {
 	const signUp_button = document.getElementById("sign-up_button");
 	const logIn_button = document.getElementById("log-in_button");
+	const logIn_buttonMobile = document.getElementById("log-in_button-mobile");
+
 	const myProfile_button = document.getElementById("my-profile_button");
 	const map_button = document.getElementById("map_button");
 	const directory_button = document.getElementById("directory_button");
@@ -126,4 +132,5 @@ function toggleButtons() {
 	myProfile_button.classList.toggle("hide");
 	map_button.classList.toggle("hide");
 	directory_button.classList.toggle("hide");
+	logIn_buttonMobile.classList.toggle("hide");
 }
