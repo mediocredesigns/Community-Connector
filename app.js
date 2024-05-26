@@ -30,8 +30,8 @@ async function fetchUserData() {
 		orgInfo = data._organization;
 		orgLat = data._organization.orgLat;
 		orgLng = data._organization.orgLng;
-		let orgFilter = data.UserOrgName;
-
+		let orgFilter = data.UserOrgName.toLowerCase();
+		console.log(orgFilter);
 		orgTitle = data._organization.OrgName.split(" ")
 			.map((word) => word[0].toUpperCase() + word.slice(1))
 			.join(" ");
@@ -266,37 +266,48 @@ filterInput.addEventListener("input", function () {
 	loadDirectory(filteredData);
 });
 
-function printTable() {
-	var table = document.getElementById("table_wrap");
-	var printWindow = window.open("", "", "height=600,width=800");
-	printWindow.document.write("<html><head><title>Print Table</title>");
+document
+	.getElementById("printButton")
+	.addEventListener("click", printTableWrap);
+
+function printTableWrap() {
+	// Get the content of the element with ID 'table_wrap'
+	const tableWrapContent = document.getElementById("table_wrap").outerHTML;
+
+	const printWindow = window.open("", "", "height=800,width=1200");
+
+	printWindow.document.write(
+		`<html><head><title>${orgTitle}'s Directory, printed by Community Connector.  Connect with your community at: Connector.Community</title>`
+	);
 	printWindow.document.write("<style>");
-	printWindow.document.write(
-		".table4_list-wrapper { font-family: Arial, sans-serif; border-collapse: collapse; width: 100%; }"
-	);
-	printWindow.document.write(
-		".table4_list-wrapper .table4_header-row, .table4_list-wrapper .table4_item { border: 1px solid #dddddd; padding: 8px; display: table-row; }"
-	);
-	printWindow.document.write(
-		".table4_list-wrapper .table4_header-row { background-color: #f2f2f2; font-weight: bold; }"
-	);
-	printWindow.document.write(
-		".table4_list-wrapper .table4_column { padding: 8px; text-align: left; display: table-cell; }"
-	);
+	// Add any styles you want for the print
+	printWindow.document.write(`
+	.
+    .table4_list-wrapper {color: black; font-family: Arial, sans-serif; width: 100%; }
+    .table4_header-row { background-color: #f1f1f1; display: flex; }
+    .table4_column { padding: 8px; border: 1px solid #ddd; flex: 1; }
+    .text-weight-semibold { font-weight: bold; }
+    .text-weight-medium { font-weight: 500; }
+    .table4_item { border-bottom: 1px solid #ddd; display: flex; }
+	 .table4_header-link { color: black; text-decoration: none; }
+	 h1 { font-size: 18pt; font-weight: bold; }
+	     .print-title { text-align: right; font-size: 12pt; font-weight: normal; }
+  `);
 	printWindow.document.write("</style>");
+	printWindow.document.write(`<h1>${orgTitle}'s Directory</h1>`);
 	printWindow.document.write("</head><body>");
-	for (var i = 0; i < table.rows.length; i++) {
-		printWindow.document.write('<div class="table4_item">');
-		for (var j = 0; j < table.rows[i].cells.length; j++) {
-			printWindow.document.write(
-				'<div class="table4_column">' +
-					table.rows[i].cells[j].innerHTML +
-					"</div>"
-			);
-		}
-		printWindow.document.write("</div>");
-	}
+	printWindow.document.write(tableWrapContent);
 	printWindow.document.write("</body></html>");
+
+	// Close the document to ensure the content is fully loaded before printing
 	printWindow.document.close();
-	printWindow.print();
+
+	// Wait for the content to be fully loaded and then call the print function
+	printWindow.onload = function () {
+		printWindow.print();
+		printWindow.close();
+	};
 }
+
+// Call the function to print the table_wrap element
+// printTableWrap();

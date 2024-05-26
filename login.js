@@ -33,6 +33,8 @@ document
 		})
 			.then((response) => {
 				if (!response.ok) {
+					let loginMessage = document.getElementById("login-message");
+					loginMessage.innerHTML = `Forgot Password? <a href="/password-request">Reset Password</a>`;
 					throw new Error("Network response was not ok");
 				}
 				return response.json();
@@ -46,9 +48,6 @@ document
 				document.getElementById("login-modal").style.display = "none";
 			})
 			.catch((error) => {
-				let loginMessage = document.getElementById("login-message");
-				loginMessage.innerHTML =
-					'Forgot Password? <a href="/sign-up">Reset Password</a>';
 				alert("That email and/or password does not match our records");
 				console.error("There was a problem with the fetch operation:", error);
 			});
@@ -82,6 +81,8 @@ document
 		})
 			.then((response) => {
 				if (!response.ok) {
+					let loginMessage = document.getElementById("login-message-mobile");
+					loginMessage.innerHTML = `Forgot Password? <a href="/password-request">Reset Password</a>`;
 					throw new Error("Network response was not ok");
 				}
 				return response.json();
@@ -95,9 +96,6 @@ document
 				document.getElementById("login-modal").style.display = "none";
 			})
 			.catch((error) => {
-				let loginMessage = document.getElementById("login-message");
-				loginMessage.innerHTML =
-					'Forgot Password? <a href="/sign-up">Reset Password</a>';
 				alert("That email and/or password does not match our records");
 				console.error("There was a problem with the fetch operation:", error);
 			});

@@ -7,9 +7,9 @@ document
 			window.location.href = "/my-profile";
 		}
 		const formData = {
-			name: document.getElementById("name").value,
-			email: document.getElementById("email").value,
-			password: document.getElementById("password").value,
+			name: document.getElementById("nameSU").value,
+			email: document.getElementById("emailSU").value,
+			password: document.getElementById("passwordSU").value,
 			orgName: document.getElementById("school").value,
 			orgKey: document.getElementById("schoolKey").value,
 
@@ -28,16 +28,18 @@ document
 				if (response.ok) {
 					return response.json();
 				} else {
-					alert(
-						"Request not completed - make sure password has both letters and numbers."
-					);
-					throw new Error("Something went wrong with the request.");
+					return response.json().then((errorData) => {
+						alert(errorData.message);
+						throw new Error(errorData.message);
+					});
 				}
 			})
 			.then((data) => {
 				if (!data) {
 					console.log("NULL DATA");
-					alert("Organization and/or Passkey are incorrect");
+					alert(
+						"Passkey does not match organization.  Try again or contact your organization."
+					);
 				} else {
 					const xanoResponse = data;
 					console.log("xanoResponse", xanoResponse);
