@@ -101,6 +101,15 @@ document
 			});
 	});
 
+let logOutBtnMenu = document.getElementById("log-out-menu");
+
+logOutBtnMenu.addEventListener("click", () => {
+	console.log("click");
+	localStorage.clear();
+	alert("You are not logged in");
+	window.location.href = "/";
+});
+
 function toggleButtons() {
 	const signUp_button = document.getElementById("sign-up_button");
 	const logIn_button = document.getElementById("log-in_button");
@@ -109,6 +118,7 @@ function toggleButtons() {
 	const myProfile_button = document.getElementById("my-profile_button");
 	const app_button = document.getElementById("app_button");
 
+	logOutBtnMenu.classList.toggle("hide");
 	signUp_button.classList.toggle("hide");
 	logIn_button.classList.toggle("hide");
 	myProfile_button.classList.toggle("hide");

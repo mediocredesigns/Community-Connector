@@ -103,16 +103,11 @@ function loadDirectory(users) {
 	document.getElementById("countInitial").textContent = users.length;
 
 	// Sort users alphabetically by name
-	users.sort((a, b) => {
-		if (a.name.toLowerCase() < b.name.toLowerCase()) {
-			return -1;
-		}
-		if (a.name.toLowerCase() > b.name.toLowerCase()) {
-			return 1;
-		}
-		return 0;
-	});
+	users.sort((a, b) =>
+		a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+	);
 
+	// Create column headers if orgInfo filters are present
 	let columnHeader1 = orgInfo.orgFilterOne
 		? `
         <div role="columnheader" class="table4_column is-header-column">
@@ -131,6 +126,17 @@ function loadDirectory(users) {
         </div>`
 		: "";
 
+	// Create "Student's Name" column header if includeChild is true
+	let columnHeaderChild = orgInfo.includeChild
+		? `
+        <div role="columnheader" class="table4_column is-header-column">
+            <a fs-cmssort-desc="is-desc" fs-cmssort-element="trigger" fs-cmssort-field="IDENTIFIER" fs-cmssort-asc="is-asc" href="#" class="table4_header-link w-inline-block">
+                <div id="childNameLabel" class="text-weight-semibold">Student</div>
+            </a>
+        </div>`
+		: "";
+
+	// Create row header
 	let rowHeader = `
         <div class="table4_header-row">
             <div role="columnheader" class="table4_column is-header-column">
@@ -138,6 +144,7 @@ function loadDirectory(users) {
                     <div class="text-weight-semibold">Name</div>
                 </a>
             </div>
+            ${columnHeaderChild}
             <div role="columnheader" class="table4_column is-header-column">
                 <a fs-cmssort-desc="is-desc" fs-cmssort-element="trigger" fs-cmssort-field="IDENTIFIER" fs-cmssort-asc="is-asc" href="#" class="table4_header-link w-inline-block">
                     <div class="text-weight-semibold">Email</div>
@@ -150,19 +157,21 @@ function loadDirectory(users) {
             </div>
             ${columnHeader1}
             ${columnHeader2}
-        </div>
-    `;
+        </div>`;
 
 	tableWrap.insertAdjacentHTML("beforeend", rowHeader);
 
+	// Iterate through each user and create a row
 	users.forEach((item) => {
-		const { name, email, phone, userFilterOne, userFilterTwo } = item;
+		const { name, email, phone, userFilterOne, userFilterTwo, childName } =
+			item;
 
+		// Create user filter inserts if orgInfo filters are present
 		let userFilterInsert1 = orgInfo.orgFilterOne
 			? `
             <div role="cell" class="table4_column">
                 <div id="filterOneText" fs-cmsfilter-field="filterOne">
-                    ${userFilterOne ? userFilterOne : "Not Listed"}
+                    ${userFilterOne || "Not Listed"}
                 </div>
             </div>`
 			: "";
@@ -171,11 +180,22 @@ function loadDirectory(users) {
 			? `
             <div role="cell" class="table4_column">
                 <div id="filterTwoText" fs-cmsfilter-field="filterTwo">
-                    ${userFilterTwo ? userFilterTwo : "Not Listed"}
+                    ${userFilterTwo || "Not Listed"}
                 </div>
             </div>`
 			: "";
 
+		// Create "Student's Name" cell if includeChild is true
+		let childNameInsert = orgInfo.includeChild
+			? `
+            <div role="cell" class="table4_column">
+                <div id="childNameText" fs-cmsfilter-field="childName">
+                    ${childName || "Not Listed"}
+                </div>
+            </div>`
+			: "";
+
+		// Create HTML for the user row
 		let htmlInsert = `
             <div role="row" class="table4_item">
                 <div role="cell" class="table4_column">
@@ -183,14 +203,15 @@ function loadDirectory(users) {
                         ${name}
                     </div>
                 </div>
+                ${childNameInsert}
                 <div role="cell" class="table4_column">
                     <div id="emailText">
-                        ${email ? email : "Not Listed"}
+                        ${email || "Not Listed"}
                     </div>
                 </div>
                 <div role="cell" class="table4_column">
                     <div id="phoneText">
-                        ${phone ? phone : "Not Listed"}
+                        ${phone || "Not Listed"}
                     </div>
                 </div>
                 ${userFilterInsert1}
@@ -223,24 +244,30 @@ function loadMap(users) {
 	layer.bindPopup(`This is ${orgTitle}!`).openPopup();
 
 	users.forEach((item) => {
-		const { name, lat, lng, email, phone, preference } = item;
-		const newMaker = L.marker([lat, lng], {
+		const { name, lat, lng, email, phone, preference, childName } = item;
+		const newMarker = L.marker([lat, lng], {
 			title: name,
 			riseOnHover: true,
 		}).addTo(map);
 
 		let phoneInsert = phone ? `<b>Phone:</b> ${phone}<br>` : "";
-
 		let emailInsert = email ? `<b>Email:</b> ${email}<br>` : "";
+		let childInsert =
+			orgInfo.includeChild && childName
+				? `<b>Student:</b> ${childName}<br>`
+				: "";
 
-		popUpinsert = `<div><b>Family:</b> ${name}<div>
-			<div class = "spacer-tiny"></div>
+		let popUpInsert = `
+			<div><b>Family:</b> ${name}<div>
+			<div>${childInsert}</div>
+			<div class="spacer-xxsmall"></div>
 			<div>${emailInsert}</div>
-			<div>${phoneInsert}<div>
-			<div class = "spacer-tiny"></div>
+			<div>${phoneInsert}</div>
+			
+			<div class="spacer-xxsmall"></div>
 			<div><b>Preference:</b><br> ${preference}</div>`;
 
-		newMaker.addTo(map).bindPopup(popUpinsert);
+		newMarker.addTo(map).bindPopup(popUpInsert);
 	});
 }
 
@@ -260,7 +287,8 @@ filterInput.addEventListener("input", function () {
 			(item.userFilterOne &&
 				item.userFilterOne.toLowerCase().includes(filterValue)) ||
 			(item.userFilterTwo &&
-				item.userFilterTwo.toLowerCase().includes(filterValue))
+				item.userFilterTwo.toLowerCase().includes(filterValue)) ||
+			(item.childName && item.childName.toLowerCase().includes(filterValue))
 	);
 
 	loadDirectory(filteredData);

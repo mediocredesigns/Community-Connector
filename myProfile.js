@@ -6,146 +6,150 @@ if (localStorage.authToken) {
 }
 
 const logOutBtn = document.getElementById("logout-button");
+let user;
 
 async function sendToXano() {
-	fetch("https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/me", {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: localStorage.authToken,
-		},
-	})
-		.then((response) => {
-			if (!response.ok) {
-				throw new Error("Network response was not ok");
+	try {
+		const response = await fetch(
+			"https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/me",
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: localStorage.authToken,
+				},
 			}
-			return response.json();
-		})
-		.then((data) => {
-			// Do something with the response data
-			user = data;
-			let str = user.UserOrgName;
-			document.getElementById("userName").innerHTML = user.name;
-			if (user.UserOrgName)
-				document.getElementById("userOrganization").innerText =
-					str[0].toUpperCase() + str.slice(1);
-			//Update Filter Titles from org details
-			if (user._organization.orgFilterOne) {
-				document.getElementById("filterOneLabel").innerHTML =
-					user._organization.orgFilterOne;
-				document.getElementById("filterOne").value = user.userFilterOne;
-			} else document.getElementById("filterOneWrapper").classList.add("hide");
-			if (user._organization.orgFilterTwo) {
-				document.getElementById("filterTwoLabel").innerHTML =
-					user._organization.orgFilterTwo;
-				document.getElementById("filterTwo").value = user.userFilterTwo;
-			} else document.getElementById("filterTwoWrapper").classList.add("hide");
+		);
 
-			updateProfile(user);
-		})
-		.catch((error) => {
-			console.error("There was a problem with the fetch operation:", error);
+		if (!response.ok) {
+			throw new Error("Network response was not ok");
+		}
+
+		const data = await response.json();
+		user = data;
+		console.log(user);
+		updateUserInterface(data);
+		updateProfile(data);
+	} catch (error) {
+		console.error("There was a problem with the fetch operation:", error);
+	}
+}
+
+function updateUserInterface(user) {
+	document.getElementById("userName").innerHTML = user.name;
+
+	if (user.UserOrgName) {
+		const str = user.UserOrgName;
+		document.getElementById("userOrganization").innerText =
+			str[0].toUpperCase() + str.slice(1);
+	}
+
+	const filterOneLabel = document.getElementById("filterOneLabel");
+	const filterOne = document.getElementById("filterOne");
+	const filterOneWrapper = document.getElementById("filterOneWrapper");
+
+	const filterTwoLabel = document.getElementById("filterTwoLabel");
+	const filterTwo = document.getElementById("filterTwo");
+	const filterTwoWrapper = document.getElementById("filterTwoWrapper");
+
+	if (user._organization.orgFilterOne) {
+		filterOneLabel.innerHTML = user._organization.orgFilterOne;
+		populateSelectOptions(filterOne, user._organization.filterOneOptions);
+		filterOne.value = user.userFilterOne;
+	} else {
+		filterOneWrapper.classList.add("hide");
+	}
+
+	if (user._organization.orgFilterTwo) {
+		filterTwoLabel.innerHTML = user._organization.orgFilterTwo;
+		populateSelectOptions(filterTwo, user._organization.filterTwoOptions);
+		filterTwo.value = user.userFilterTwo;
+	} else {
+		filterTwoWrapper.classList.add("hide");
+	}
+
+	const childNameWrapper = document
+		.getElementById("childName")
+		.closest(".form_field-wrapper");
+	if (!user._organization.includeChild) {
+		childNameWrapper.classList.add("hide");
+	} else {
+		childNameWrapper.classList.remove("hide");
+	}
+}
+
+function populateSelectOptions(selectElement, options) {
+	if (options && options.length) {
+		selectElement.innerHTML = '<option value="">Select one...</option>'; // Reset options
+		options.forEach((option) => {
+			const optionElement = document.createElement("option");
+			optionElement.value = option;
+			optionElement.textContent = option;
+			selectElement.appendChild(optionElement);
 		});
+	}
 }
 
 function updateProfile(user) {
+	document.getElementById("name").value = user.name;
+	document.getElementById("email-profile").value = user.email;
+	document.getElementById("preferences").value = user.preference || "";
+	document.getElementById("phone").value = user.phone || "";
+	document.getElementById("includedMap").checked = user.includedMap;
+	document.getElementById("includedDirectory").checked = user.includedDirectory;
+	document.getElementById("childName").value = user.childName || ""; // Added childName
+
+	initMap(user);
+}
+
+function initMap(user) {
 	let lat, lng, map, marker;
+	const loader = document.getElementById("loadingFill");
 
-	let loader = document.getElementById("loadingFill");
-	let name = document.getElementById("name");
-	name.value = user.name;
-	let email = document.getElementById("email-profile");
-	email.value = user.email;
-	let preferences = document.getElementById("preferences");
-	if (user.preference) preferences.value = user.preference;
-	let phone = document.getElementById("phone");
-	if (user.phone) phone.value = user.phone;
-	//STILL NEED TO ADD FILTERS
-	let includedMapBox = document.getElementById("includedMap");
-	includedMapBox.checked = user.includedMap;
+	const setPosition = (latitude, longitude) => {
+		lat = latitude;
+		lng = longitude;
+		map = L.map("map").setView([lat, lng], 12);
+		L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(
+			map
+		);
 
-	let includedDirectoryBox = document.getElementById("includedDirectory");
-	includedDirectoryBox.checked = user.includedDirectory;
+		marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+		marker
+			.bindPopup("<b>This is you!</b><br>Drag to desired position")
+			.openPopup();
 
-	console.log(user);
+		loader.classList.toggle("hide");
+		document.getElementById("lat").value = lat;
+		document.getElementById("lng").value = lng;
 
-	function getLocation() {
-		if (!user.lat) {
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(showPosition);
-			} else {
+		marker.on("drag", (e) => {
+			const position = e.target.getLatLng();
+			document.getElementById("lat").value = position.lat;
+			document.getElementById("lng").value = position.lng;
+		});
+	};
+
+	if (user.lat && user.lng) {
+		setPosition(user.lat, user.lng);
+	} else if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				setPosition(position.coords.latitude, position.coords.longitude);
+			},
+			() => {
 				alert("Geolocation is not supported by this browser.");
 			}
-		} else showCurrentPosition();
-	}
-
-	function showCurrentPosition() {
-		lat = user.lat;
-		lng = user.lng;
-		map = L.map("map").setView([lat, lng], 12); // Default view
-		L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(
-			map
 		);
-
-		marker = L.marker([lat, lng], {
-			draggable: true,
-		}).addTo(map);
-		marker
-			.bindPopup("<b>This is you!</b><br>Drag to desired position")
-			.openPopup();
-
-		loader.classList.toggle("hide");
-		document.getElementById("lat").value = lat;
-		document.getElementById("lng").value = lng;
-
-		marker.on("drag", function (e) {
-			updateMarker(e);
-		});
-	}
-
-	function showPosition(position) {
-		if (position.coords) {
-			lat = position.coords.latitude;
-			lng = position.coords.longitude;
-		}
-		map = L.map("map").setView([lat, lng], 12); // Default view
-		L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(
-			map
-		);
-
-		marker = L.marker([lat, lng], {
-			draggable: true,
-		}).addTo(map);
-		marker
-			.bindPopup("<b>This is you!</b><br>Drag to desired position")
-			.openPopup();
-
-		loader.classList.toggle("hide");
-		document.getElementById("lat").value = lat;
-		document.getElementById("lng").value = lng;
-
-		marker.on("drag", function (e) {
-			updateMarker(e);
-		});
-	}
-
-	getLocation();
-
-	// Function to update marker position
-	function updateMarker(e) {
-		lat = e.target.getLatLng().lat;
-		lng = e.target.getLatLng().lng;
-		marker.setLatLng([lat, lng]);
-		console.log(lat, lng);
-		document.getElementById("lat").value = lat;
-		document.getElementById("lng").value = lng;
+	} else {
+		alert("Geolocation is not supported by this browser.");
 	}
 }
 
 document
 	.getElementById("userForm")
-	.addEventListener("submit", function (event) {
-		event.preventDefault(); // Prevent the default form submission
+	.addEventListener("submit", async (event) => {
+		event.preventDefault();
 		event.stopPropagation();
 
 		const formData = {
@@ -153,6 +157,7 @@ document
 			email: user.email,
 			phone: document.getElementById("phone").value,
 			name: document.getElementById("name").value,
+			childName: document.getElementById("childName").value, // Added childName
 			preference: document.getElementById("preferences").value,
 			lat: parseFloat(document.getElementById("lat").value),
 			lng: parseFloat(document.getElementById("lng").value),
@@ -161,26 +166,28 @@ document
 			userFilterOne: document.getElementById("filterOne").value,
 			userFilterTwo: document.getElementById("filterTwo").value,
 		};
-		console.log(formData);
-		fetch(`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/user/${user.id}`, {
-			method: "PATCH",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(formData),
-		})
-			.then((response) => {
-				let textElement = document.getElementById("updatedText");
-				textElement.style.opacity = 1; // Display the text
-				setTimeout(function () {
-					textElement.style.opacity = 0; // Hide the text after 5 seconds
-				}, 3000); // 5000 milliseconds = 5 seconds
 
-				console.log("response", response);
-			})
-			.catch((error) => {
-				// Handle error
-			});
+		try {
+			const response = await fetch(
+				`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/user/${user.id}`,
+				{
+					method: "PATCH",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(formData),
+				}
+			);
+
+			document.getElementById("updatedText").style.opacity = 1;
+			setTimeout(() => {
+				document.getElementById("updatedText").style.opacity = 0;
+			}, 3000);
+
+			console.log("response", response);
+		} catch (error) {
+			console.error("There was an error updating the profile:", error);
+		}
 	});
 
 logOutBtn.addEventListener("click", () => {

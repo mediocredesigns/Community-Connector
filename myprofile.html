@@ -11,6 +11,15 @@
 				required />
 		</div>
 		<div class="form_field-wrapper">
+			<label for="childName" class="form_field-label">Student's Name</label>
+			<input
+				type="text"
+				class="form_input-2"
+				id="childName"
+				name="childName"
+				placeholder="Student's Name" />
+		</div>
+		<div class="form_field-wrapper">
 			<label for="email" class="form_field-label">Email</label>
 			<input
 				type="text"
@@ -29,26 +38,28 @@
 				placeholder="Optional" />
 		</div>
 		<div class="form_field-wrapper" id="filterOneWrapper">
-			<label for="FilterOne" id="filterOneLabel" class="form_field-label"
+			<label for="filterOne" id="filterOneLabel" class="form_field-label"
 				>FilterOne</label
 			>
-			<input
-				type="text"
-				class="form_input-2"
+			<select
 				id="filterOne"
 				name="filterOne"
-				placeholder="Optional" />
+				data-name="filterOne"
+				class="form_input-2">
+				<option value="">Select one...</option>
+			</select>
 		</div>
 		<div class="form_field-wrapper" id="filterTwoWrapper">
 			<label for="filterTwo" id="filterTwoLabel" class="form_field-label"
 				>FilterTwo</label
 			>
-			<input
-				type="text"
-				class="form_input-2"
+			<select
 				id="filterTwo"
 				name="filterTwo"
-				placeholder="Optional" />
+				data-name="filterTwo"
+				class="form_input-2">
+				<option value="">Select one...</option>
+			</select>
 		</div>
 		<div class="form_field-wrapper">
 			<label for="preferences" class="form_field-label">Preferences</label>
