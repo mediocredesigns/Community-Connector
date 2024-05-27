@@ -223,7 +223,7 @@ function loadDirectory(users) {
 }
 
 function loadMap(users) {
-	const map = L.map("map").setView([orgLat, orgLng], 12);
+	const map = L.map("map").setView([orgLat, orgLng], 13);
 
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 		maxZoom: 19,
