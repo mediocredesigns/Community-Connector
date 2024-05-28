@@ -2,6 +2,10 @@ document
 	.getElementById("userForm")
 	.addEventListener("submit", function (event) {
 		event.preventDefault(); // Prevent the default form submission
+
+		let warningModal = document.getElementById("warning-modal");
+		let warningText = document.getElementById("warning-text");
+
 		if (localStorage.authToken) {
 			alert("A user is already logged in!");
 			window.location.href = "/my-profile";
@@ -29,7 +33,10 @@ document
 					return response.json();
 				} else {
 					return response.json().then((errorData) => {
-						alert(errorData.message);
+						warningText.innerHTML = errorData.message;
+						warningModal.style.display = "flex";
+
+						// alert(errorData.message);
 						throw new Error(errorData.message);
 					});
 				}
@@ -37,9 +44,9 @@ document
 			.then((data) => {
 				if (!data) {
 					console.log("NULL DATA");
-					alert(
-						"Passkey does not match organization.  Try again or contact your organization."
-					);
+					warningText.innerHTML =
+						"Passkey does not match organization.  Try again or contact your organization.";
+					warningModal.style.display = "flex";
 				} else {
 					const xanoResponse = data;
 					console.log("xanoResponse", xanoResponse);
