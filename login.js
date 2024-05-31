@@ -118,10 +118,16 @@ function toggleButtons() {
 	const myProfile_button = document.getElementById("my-profile_button");
 	const app_button = document.getElementById("app_button");
 
+	const footerLogIn = document.getElementById("footer-log-in");
+	const footerApp = document.getElementById("footer-app");
+	console.log(footerApp, footerLogIn);
+
 	logOutBtnMenu.classList.toggle("hide");
 	signUp_button.classList.toggle("hide");
 	logIn_button.classList.toggle("hide");
 	myProfile_button.classList.toggle("hide");
 	app_button.classList.toggle("hide");
 	logIn_buttonMobile.classList.toggle("hide");
+	footerLogIn.classList.toggle("hide");
+	footerApp.classList.toggle("hide");
 }
