@@ -69,8 +69,6 @@ document
 			password: password,
 		};
 
-		console.log(requestBody);
-
 		// Make the fetch request
 		fetch("https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/login", {
 			method: "POST",
@@ -104,7 +102,6 @@ document
 let logOutBtnMenu = document.getElementById("log-out-menu");
 
 logOutBtnMenu.addEventListener("click", () => {
-	console.log("click");
 	localStorage.clear();
 	alert("You are not logged in");
 	window.location.href = "/";
@@ -120,7 +117,6 @@ function toggleButtons() {
 
 	const footerLogIn = document.getElementById("footer-log-in");
 	const footerApp = document.getElementById("footer-app");
-	console.log(footerApp, footerLogIn);
 
 	logOutBtnMenu.classList.toggle("hide");
 	signUp_button.classList.toggle("hide");

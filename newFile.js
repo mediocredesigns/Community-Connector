@@ -28,7 +28,6 @@ document
 			body: JSON.stringify(formData),
 		})
 			.then((response) => {
-				console.log("response", response);
 				if (response.ok) {
 					return response.json();
 				} else {
@@ -43,13 +42,12 @@ document
 			})
 			.then((data) => {
 				if (!data) {
-					console.log("NULL DATA");
 					warningText.innerHTML =
 						"Passkey does not match organization.  Try again or contact your organization.";
 					warningModal.style.display = "flex";
 				} else {
 					const xanoResponse = data;
-					console.log("xanoResponse", xanoResponse);
+					// console.log("xanoResponse", xanoResponse);
 					const authToken = xanoResponse.authToken;
 					localStorage.setItem("authToken", authToken);
 					document.getElementById("userForm").reset();

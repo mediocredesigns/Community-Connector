@@ -11,7 +11,6 @@ document
 			alert("Emails do not match.");
 			return;
 		}
-		console.log(email1);
 
 		fetch(
 			`https://x8ki-letl-twmt.n7.xano.io/api:pzfh3age/auth/magic-link?email=${email1}`,
@@ -29,7 +28,6 @@ document
 				return response.json();
 			})
 			.then((data) => {
-				console.log(data);
 				document.getElementById("email1").value = "";
 				document.getElementById("email2").value = "";
 

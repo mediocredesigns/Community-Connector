@@ -31,7 +31,6 @@ async function fetchUserData() {
 		orgLat = data._organization.orgLat;
 		orgLng = data._organization.orgLng;
 		let orgFilter = data.UserOrgName.toLowerCase();
-		console.log(orgFilter);
 		orgTitle = data._organization.OrgName.split(" ")
 			.map((word) => word[0].toUpperCase() + word.slice(1))
 			.join(" ");

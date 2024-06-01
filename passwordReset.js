@@ -18,7 +18,6 @@ function getMagicToken() {
 
 function extractTokenFromURL() {
 	const urlParams = new URLSearchParams(window.location.search);
-	console.log("Token", urlParams.get("token"));
 	return urlParams.get("token");
 }
 
@@ -36,11 +35,9 @@ function performFetch(magicToken) {
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
 			}
-			console.log("response", response);
 			return response.json();
 		})
 		.then((data) => {
-			console.log("data", data);
 			const authToken = data;
 			localStorage.setItem("authToken", authToken);
 			location.reload();
@@ -68,7 +65,6 @@ async function getUserInfo() {
 			// Do something with the response data
 			user = data;
 			document.getElementById("emailReset").value = user.email;
-			console.log(user);
 		})
 		.catch((error) => {
 			console.error("There was a problem with the fetch operation:", error);
