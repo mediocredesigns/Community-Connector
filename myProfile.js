@@ -168,6 +168,7 @@ document
 		};
 
 		try {
+			console.log("update");
 			const response = await fetch(
 				`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/user/${user.id}`,
 				{
@@ -175,6 +176,7 @@ document
 					headers: {
 						"Content-Type": "application/json",
 					},
+					Authorization: localStorage.authToken,
 					body: JSON.stringify(formData),
 				}
 			);
