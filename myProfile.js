@@ -1,4 +1,5 @@
 if (localStorage.authToken) {
+	console.log("Updated");
 	sendToXano();
 } else {
 	alert("You must be logged in to access this page");
