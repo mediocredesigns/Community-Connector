@@ -169,15 +169,16 @@ document
 		};
 
 		try {
-			console.log("update");
+			console.log("update Tues 5:30");
 			const response = await fetch(
 				`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/user/${user.id}`,
 				{
 					method: "PATCH",
 					headers: {
 						"Content-Type": "application/json",
+						Authorization: localStorage.authToken,
 					},
-					Authorization: localStorage.authToken,
+
 					body: JSON.stringify(formData),
 				}
 			);
