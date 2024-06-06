@@ -1,4 +1,3 @@
-console.log("Hi");
 document
 	.getElementById("emailForm")
 	.addEventListener("submit", function (event) {

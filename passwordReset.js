@@ -79,7 +79,7 @@ document
 
 		let password = document.getElementById("passwordReset1").value;
 
-		fetch("https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/user/320/pw", {
+		fetch(`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/user/${user.id}/pw`, {
 			method: "PATCH",
 			headers: {
 				"Content-Type": "application/json",
@@ -91,6 +91,10 @@ document
 			}),
 		})
 			.then((response) => {
+				document.getElementById("pw-update-text").style.opacity = 1;
+				setTimeout(() => {
+					document.getElementById("pw-update-text").style.opacity = 0;
+				}, 2000);
 				window.location.href = "/my-profile";
 			})
 			.catch((error) => {
