@@ -48,7 +48,7 @@ async function fetchUserData() {
 async function fetchUsersDirectory(orgFilter) {
 	try {
 		const response = await fetch(
-			`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getUsersDirectory?orgName=${orgFilter}`,
+			`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getUsersDirectory`,
 			{
 				method: "GET",
 				headers: {
@@ -71,16 +71,13 @@ async function fetchUsersDirectory(orgFilter) {
 }
 
 function fetchUsersMap(orgFilter) {
-	fetch(
-		`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getUsersMap?orgName=${orgFilter}`,
-		{
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: localStorage.authToken,
-			},
-		}
-	)
+	fetch(`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getUsersMap`, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: localStorage.authToken,
+		},
+	})
 		.then((response) => {
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
