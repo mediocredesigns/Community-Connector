@@ -1,6 +1,6 @@
 window.onload = function () {
 	if (localStorage.authToken == null) {
-		console.log("No user");
+		console.log("No user, yet!");
 	} else {
 		console.log("User Found");
 		toggleButtons();

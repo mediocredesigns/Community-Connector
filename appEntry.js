@@ -1,78 +1,18 @@
 if (localStorage.authToken) {
-	fetchUserData();
+	fetchUserEntries();
 } else {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
 }
 
+const entryNameSelect = document.getElementById("entryNameSelect");
+
 let orgInfo;
 let orgLat, orgLng, orgTitle;
-let fullData;
+let fullData, map;
 
-async function fetchUserData() {
-	try {
-		const response = await fetch(
-			"https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/me",
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: localStorage.authToken,
-				},
-			}
-		);
-
-		if (!response.ok) {
-			throw new Error("Network response was not ok");
-		}
-
-		const data = await response.json();
-		console.log(data);
-		orgInfo = data._organization;
-		orgLat = data._organization.orgLat;
-		orgLng = data._organization.orgLng;
-		let orgFilter = data.UserOrgName.toLowerCase();
-		orgTitle = data._organization.OrgName.split(" ")
-			.map((word) => word[0].toUpperCase() + word.slice(1))
-			.join(" ");
-		document.getElementById("orgTitle").innerText = orgTitle;
-
-		fetchUsersDirectory(orgFilter);
-		fetchUsersMap(orgFilter);
-	} catch (error) {
-		console.error("There was a problem with the fetch operation:", error);
-		alert("Invalid Authorization");
-		window.location.href = "/";
-	}
-}
-
-async function fetchUsersDirectory(orgFilter) {
-	try {
-		const response = await fetch(
-			`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getUsersDirectory`,
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: localStorage.authToken,
-				},
-			}
-		);
-
-		if (!response.ok) {
-			throw new Error("Network response was not ok");
-		}
-
-		const data = await response.json();
-		fullData = data;
-		loadDirectory(data);
-	} catch (error) {
-		console.error("There was a problem with the fetch operation:", error);
-	}
-}
-
-function fetchUsersMap(orgFilter) {
-	fetch(`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getUsersMap`, {
+async function fetchUserEntries() {
+	fetch("https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getUserEntries", {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -86,10 +26,127 @@ function fetchUsersMap(orgFilter) {
 			return response.json();
 		})
 		.then((data) => {
-			loadMap(data);
+			let entryID = data[0].id;
+			entries = data;
+
+			if (entries.length) {
+				populateSelectOptions(entryNameSelect, entries);
+			} else {
+				entryNameSelect.innerHTML = '<option value="">Select one...</option>';
+			}
+
+			fetchOrgData(entryID);
 		})
 		.catch((error) => {
 			console.error("There was a problem with the fetch operation:", error);
+		});
+}
+
+function populateSelectOptions(selectElement, options) {
+	selectElement.innerHTML = '<option value="">Select one...</option>';
+	console.log(options, "OPTIONS");
+	if (options && options.length) {
+		options.forEach((option) => {
+			const optionElement = document.createElement("option");
+			optionElement.value = option.id;
+			optionElement.textContent = option.entryName;
+			selectElement.appendChild(optionElement);
+		});
+		let firstOption = options[0].id;
+		selectElement.value = firstOption;
+		getDirectoryEntries(firstOption);
+		getMapEntries(firstOption);
+	}
+}
+
+async function fetchOrgData(entryID) {
+	fetch(
+		`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/organization?entryID=${entryID}`,
+		{
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: localStorage.authToken,
+			},
+		}
+	)
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+			return response.json();
+		})
+		.then((data) => {
+			console.log(data);
+			orgInfo = data;
+			orgLat = data.orgLat;
+			orgLng = data.orgLng;
+			orgTitle = data.OrgName;
+			document.getElementById("orgTitle").innerText = orgTitle;
+		})
+		.catch((error) => {
+			console.error("There was a problem with the fetch operation:", error);
+		});
+}
+
+entryNameSelect.addEventListener("change", async () => {
+	await fetchOrgData(entryNameSelect.value);
+	await getMapEntries(entryNameSelect.value);
+	await getDirectoryEntries(entryNameSelect.value);
+});
+
+async function getDirectoryEntries(entryID) {
+	console.log("entry ID", entryID);
+
+	fetch(
+		`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getDirectoryEntries?entryID=${entryID}`,
+		{
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: localStorage.authToken,
+			},
+		}
+	)
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+			return response.json();
+		})
+		.then((data) => {
+			fullData = data;
+			loadDirectory(data);
+		})
+		.catch((error) => {
+			console.error("There was a problem with your fetch operation:", error);
+		});
+}
+
+async function getMapEntries(entryID) {
+	console.log("entry ID", entryID);
+
+	fetch(
+		`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getMapEntries?entryID=${entryID}`,
+		{
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: localStorage.authToken,
+			},
+		}
+	)
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+			return response.json();
+		})
+		.then((data) => {
+			loadMap(data);
+		})
+		.catch((error) => {
+			console.error("There was a problem with your fetch operation:", error);
 		});
 }
 
@@ -97,10 +154,10 @@ function loadDirectory(users) {
 	let tableWrap = document.getElementById("table_wrap");
 	tableWrap.innerHTML = ""; // Clear previous content
 	document.getElementById("countInitial").textContent = users.length;
-
+	console.log("orginfo", orgInfo);
 	// Sort users alphabetically by name
 	users.sort((a, b) =>
-		a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+		a.entryName.toLowerCase().localeCompare(b.entryName.toLowerCase())
 	);
 
 	// Create column headers if orgInfo filters are present
@@ -159,15 +216,16 @@ function loadDirectory(users) {
 
 	// Iterate through each user and create a row
 	users.forEach((item) => {
-		const { name, email, phone, userFilterOne, userFilterTwo, childName } =
-			item;
+		const name = item._user.name;
+		const email = item._user.email;
+		const { entryPhone, entryFilterOne, entryFilterTwo, entryName } = item;
 
 		// Create user filter inserts if orgInfo filters are present
 		let userFilterInsert1 = orgInfo.orgFilterOne
 			? `
             <div role="cell" class="table4_column">
                 <div id="filterOneText" fs-cmsfilter-field="filterOne">
-                    ${userFilterOne || "Not Listed"}
+                    ${entryFilterOne || "Not Listed"}
                 </div>
             </div>`
 			: "";
@@ -176,7 +234,7 @@ function loadDirectory(users) {
 			? `
             <div role="cell" class="table4_column">
                 <div id="filterTwoText" fs-cmsfilter-field="filterTwo">
-                    ${userFilterTwo || "Not Listed"}
+                    ${entryFilterTwo || "Not Listed"}
                 </div>
             </div>`
 			: "";
@@ -186,7 +244,7 @@ function loadDirectory(users) {
 			? `
             <div role="cell" class="table4_column">
                 <div id="childNameText" fs-cmsfilter-field="childName">
-                    ${childName || "Not Listed"}
+                    ${entryName || "Not Listed"}
                 </div>
             </div>`
 			: "";
@@ -207,7 +265,7 @@ function loadDirectory(users) {
                 </div>
                 <div role="cell" class="table4_column">
                     <div id="phoneText">
-                        ${phone || "Not Listed"}
+                        ${entryPhone || "Not Listed"}
                     </div>
                 </div>
                 ${userFilterInsert1}
@@ -219,7 +277,17 @@ function loadDirectory(users) {
 }
 
 function loadMap(users) {
-	const map = L.map("map").setView([orgLat, orgLng], 13);
+	if (map) {
+		map.eachLayer(function (layer) {
+			if (layer !== map) {
+				map.removeLayer(layer);
+			}
+		});
+	} else {
+		map = L.map("map");
+	}
+
+	map.setView([orgLat, orgLng], 13); // Recenter the map
 
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 		maxZoom: 19,
@@ -240,28 +308,38 @@ function loadMap(users) {
 	layer.bindPopup(`This is ${orgTitle}!`).openPopup();
 
 	users.forEach((item) => {
-		const { name, lat, lng, email, phone, preference, childName } = item;
+		const name = item._user.name;
+		const email = item._user.email;
+		const {
+			entryPhone,
+			entryPreference,
+			entryFilterOne,
+			entryFilterTwo,
+			lat,
+			lng,
+			entryName,
+		} = item;
 		const newMarker = L.marker([lat, lng], {
 			title: name,
 			riseOnHover: true,
-		}).addTo(map);
+		});
 
-		let phoneInsert = phone ? `<b>Phone:</b> ${phone}<br>` : "";
+		let phoneInsert = entryPhone ? `<b>Phone:</b> ${entryPhone}<br>` : "";
 		let emailInsert = email ? `<b>Email:</b> ${email}<br>` : "";
 		let childInsert =
 			orgInfo.includeChild && childName
-				? `<b>Student:</b> ${childName}<br>`
+				? `<b>Student:</b> ${entryName}<br>`
 				: "";
 
 		let popUpInsert = `
-			<div><b>Family:</b> ${name}<div>
-			<div>${childInsert}</div>
-			<div class="spacer-xxsmall"></div>
-			<div>${emailInsert}</div>
-			<div>${phoneInsert}</div>
-			
-			<div class="spacer-xxsmall"></div>
-			<div><b>Preference:</b><br> ${preference}</div>`;
+            <div><b>Family:</b> ${name}<div>
+            <div>${childInsert}</div>
+            <div class="spacer-xxsmall"></div>
+            <div>${emailInsert}</div>
+            <div>${phoneInsert}</div>
+            
+            <div class="spacer-xxsmall"></div>
+            <div><b>Preference:</b><br> ${entryPreference}</div>`;
 
 		newMarker.addTo(map).bindPopup(popUpInsert);
 	});
@@ -276,16 +354,18 @@ searchForm.addEventListener("submit", function (e) {
 
 filterInput.addEventListener("input", function () {
 	const filterValue = filterInput.value.toLowerCase();
-	const filteredData = fullData.filter(
-		(item) =>
-			item.name.toLowerCase().includes(filterValue) ||
-			(item.email && item.email.toLowerCase().includes(filterValue)) ||
-			(item.userFilterOne &&
-				item.userFilterOne.toLowerCase().includes(filterValue)) ||
-			(item.userFilterTwo &&
-				item.userFilterTwo.toLowerCase().includes(filterValue)) ||
-			(item.childName && item.childName.toLowerCase().includes(filterValue))
-	);
+	const filteredData = fullData.filter((item) => {
+		return (
+			item._user.name.toLowerCase().includes(filterValue) ||
+			(item._user.email &&
+				item._user.email.toLowerCase().includes(filterValue)) ||
+			(item.entryFilterOne &&
+				item.entryFilterOne.toLowerCase().includes(filterValue)) ||
+			(item.entryFilterTwo &&
+				item.entryFilterTwo.toLowerCase().includes(filterValue)) ||
+			(item.entryName && item.entryName.toLowerCase().includes(filterValue))
+		);
+	});
 
 	loadDirectory(filteredData);
 });

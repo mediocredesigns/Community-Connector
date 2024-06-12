@@ -1,46 +1,47 @@
 <form id="userForm" class="sign-up_application-form_form-block">
 	<div class="sign-up_application-form_form">
 		<div class="form_field-wrapper">
-			<label for="name" class="form_field-label">Name</label>
+			<label for="nameSU" class="form_field-label">Account Name</label>
 			<input
 				type="text"
 				class="form_input-2"
 				id="nameSU"
-				name="name"
-				placeholder="Name"
-				required />
+				name="nameSU"
+				placeholder="Account Name"
+				required
+				disabled />
 		</div>
-		<div class="”form_field-wrapper”">
-			<label for="email" class="form_field-label">Email</label>
+		<div class="form_field-wrapper">
+			<label for="emailSU" class="form_field-label">Email</label>
 			<input
 				type="email"
 				class="form_input-2"
 				id="emailSU"
-				name="email"
+				name="emailSU"
 				placeholder="Email"
-				required />
+				required
+				disabled />
 		</div>
-		<div class="”form_field-wrapper”">
-			<label for="password" class="form_field-label">Password</label>
+		<div class="form_field-wrapper">
+			<label for="entryName" class="form_field-label">Name for Directory</label>
 			<input
-				type="passwordSU"
+				type="text"
 				class="form_input-2"
-				id="passwordSU"
-				name="password"
-				placeholder="Password"
+				id="entryName"
+				name="entryName"
+				placeholder="Name for Directory Entry (Could be student)"
 				required />
 		</div>
-
-		<div class="”form_field-wrapper”">
-			<label for="Organization" class="form_field-label">Organization</label>
+		<div class="form_field-wrapper">
+			<label for="school" class="form_field-label">Organization</label>
 			<select id="school" name="school" data-name="school" class="form_input-2">
 				<option value="">Select one...</option>
 				<option value="Avalon">Avalon</option>
 				<option value="Tim's House">Tim's House</option>
-				<option value="Test">Test</option>
+				<option value="Awesome School">Awesome School</option>
 			</select>
 		</div>
-		<div class="”form_field-wrapper”">
+		<div class="form_field-wrapper">
 			<label for="schoolKey" class="form_field-label">School Key</label>
 			<input
 				type="text"
@@ -51,11 +52,11 @@
 				required />
 		</div>
 		<p class="text-style-italic">
-			Where do I get my <a href="">School Key?</a>
+			Where do I get my <a href="#">School Key?</a>
 		</p>
 		<button class="button" type="submit">Submit</button>
 		<p class="text-style-italic">
-			By hitting 'Submit', I agree to the <a href="">Terms of Service</a>
+			By hitting 'Submit', I agree to the <a href="/tos">Terms of Service</a>
 		</p>
 	</div>
 </form>

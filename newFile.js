@@ -14,13 +14,10 @@ document
 			name: document.getElementById("nameSU").value,
 			email: document.getElementById("emailSU").value,
 			password: document.getElementById("passwordSU").value,
-			orgName: document.getElementById("school").value,
-			orgKey: document.getElementById("schoolKey").value,
-
 			// UserOrgName: document.getElementById("school").value,
 		};
 
-		fetch("https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/signup", {
+		fetch("https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/signup_1", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -51,7 +48,7 @@ document
 					const authToken = xanoResponse.authToken;
 					localStorage.setItem("authToken", authToken);
 					document.getElementById("userForm").reset();
-					window.location.href = "/my-profile";
+					window.location.href = "/new-entry";
 				}
 			})
 			.catch((error) => console.error("Error:", error));

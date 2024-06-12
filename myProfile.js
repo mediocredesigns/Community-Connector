@@ -1,5 +1,4 @@
 if (localStorage.authToken) {
-	console.log("Updated");
 	sendToXano();
 } else {
 	alert("You must be logged in to access this page");
@@ -8,11 +7,14 @@ if (localStorage.authToken) {
 
 const logOutBtn = document.getElementById("logout-button");
 let user;
+let entry;
+let map; // Declare the map variable at the top level
+let marker; // Declare the marker variable at the top level
 
 async function sendToXano() {
 	try {
 		const response = await fetch(
-			"https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/me",
+			"https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/me_entries",
 			{
 				method: "GET",
 				headers: {
@@ -29,20 +31,28 @@ async function sendToXano() {
 		const data = await response.json();
 		user = data;
 		console.log(user);
-		updateUserInterface(data);
-		updateProfile(data);
+
+		entry =
+			user.entry_id && user.entry_id.length && user.entry_id[0].length
+				? user.entry_id[0][0]
+				: null;
+		console.log(entry);
+		if (entry) {
+			updateUserInterface(entry);
+			updateProfile(entry);
+		}
 	} catch (error) {
 		console.error("There was a problem with the fetch operation:", error);
 	}
 }
 
-function updateUserInterface(user) {
+function updateUserInterface(entry) {
 	document.getElementById("userName").innerHTML = user.name;
 
-	if (user.UserOrgName) {
-		const str = user.UserOrgName;
+	if (entry._organization.OrgName) {
+		const orgName = entry._organization.OrgName;
 		document.getElementById("userOrganization").innerText =
-			str[0].toUpperCase() + str.slice(1);
+			orgName[0].toUpperCase() + orgName.slice(1);
 	}
 
 	const filterOneLabel = document.getElementById("filterOneLabel");
@@ -53,35 +63,63 @@ function updateUserInterface(user) {
 	const filterTwo = document.getElementById("filterTwo");
 	const filterTwoWrapper = document.getElementById("filterTwoWrapper");
 
-	if (user._organization.orgFilterOne) {
-		filterOneLabel.innerHTML = user._organization.orgFilterOne;
-		populateSelectOptions(filterOne, user._organization.filterOneOptions);
-		filterOne.value = user.userFilterOne;
+	const entryNameSelect = document.getElementById("entryNameSelect");
+
+	if (entry._organization.orgFilterOne) {
+		filterOneLabel.innerHTML = entry._organization.orgFilterOne;
+		populateSelectOptions(filterOne, entry._organization.filterOneOptions);
+		filterOne.value = entry.entryFilterOne;
 	} else {
 		filterOneWrapper.classList.add("hide");
 	}
 
-	if (user._organization.orgFilterTwo) {
-		filterTwoLabel.innerHTML = user._organization.orgFilterTwo;
-		populateSelectOptions(filterTwo, user._organization.filterTwoOptions);
-		filterTwo.value = user.userFilterTwo;
+	if (entry._organization.orgFilterTwo) {
+		filterTwoLabel.innerHTML = entry._organization.orgFilterTwo;
+		populateSelectOptions(filterTwo, entry._organization.filterTwoOptions);
+		filterTwo.value = entry.entryFilterTwo;
 	} else {
 		filterTwoWrapper.classList.add("hide");
+	}
+
+	let entryArray = user.entry_id;
+	let entryArrayNames = entryArray.map((entry) => entry[0].entryName);
+
+	if (entryArrayNames.length) {
+		populateEntryOptions(entryNameSelect, entryArrayNames);
+	} else {
+		entryNameSelect.innerHTML = '<option value="">Select one...</option>';
 	}
 
 	const childNameWrapper = document
 		.getElementById("childName")
 		.closest(".form_field-wrapper");
-	if (!user._organization.includeChild) {
+	if (!entry._organization.includeChild) {
 		childNameWrapper.classList.add("hide");
 	} else {
 		childNameWrapper.classList.remove("hide");
 	}
 }
 
-function populateSelectOptions(selectElement, options) {
+function populateEntryOptions(selectElement, options) {
+	selectElement.innerHTML = '<option value="">Select one...</option>';
 	if (options && options.length) {
-		selectElement.innerHTML = '<option value="">Select one...</option>'; // Reset options
+		options.forEach((option) => {
+			const optionElement = document.createElement("option");
+			optionElement.value = option;
+			optionElement.textContent = option;
+			selectElement.appendChild(optionElement);
+		});
+	}
+	// Adding the last item
+	const lastItem = document.createElement("option");
+	lastItem.value = "add_new_entry";
+	lastItem.textContent = "✳️ Add a new entry ✳️";
+	selectElement.appendChild(lastItem);
+}
+
+function populateSelectOptions(selectElement, options) {
+	selectElement.innerHTML = '<option value="">Select one...</option>';
+	if (options && options.length) {
 		options.forEach((option) => {
 			const optionElement = document.createElement("option");
 			optionElement.value = option;
@@ -91,48 +129,55 @@ function populateSelectOptions(selectElement, options) {
 	}
 }
 
-function updateProfile(user) {
-	document.getElementById("name").value = user.name;
-	document.getElementById("email-profile").value = user.email;
-	document.getElementById("preferences").value = user.preference || "";
-	document.getElementById("phone").value = user.phone || "";
-	document.getElementById("includedMap").checked = user.includedMap;
-	document.getElementById("includedDirectory").checked = user.includedDirectory;
-	document.getElementById("childName").value = user.childName || ""; // Added childName
+function updateProfile(entry) {
+	document.getElementById("childName").value = entry.entryName || "";
+	document.getElementById("preferences").value = entry.entryPreference || "";
+	document.getElementById("phone").value = entry.entryPhone || "";
+	document.getElementById("includedMap").checked = entry.includedMap;
+	document.getElementById("includedDirectory").checked =
+		entry.includedDirectory;
+	document.getElementById("entryNameSelect").value = entry.entryName || "";
 
-	initMap(user);
+	initMap(entry);
 }
 
-function initMap(user) {
-	let lat, lng, map, marker;
+function initMap(entry) {
+	let lat = entry.lat;
+	let lng = entry.lng;
 	const loader = document.getElementById("loadingFill");
 
 	const setPosition = (latitude, longitude) => {
 		lat = latitude;
 		lng = longitude;
-		map = L.map("map").setView([lat, lng], 12);
-		L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(
-			map
-		);
 
-		marker = L.marker([lat, lng], { draggable: true }).addTo(map);
-		marker
-			.bindPopup("<b>This is you!</b><br>Drag to desired position")
-			.openPopup();
+		if (map) {
+			map.setView([lat, lng], 12);
+			marker.setLatLng([lat, lng]);
+		} else {
+			map = L.map("map").setView([lat, lng], 12);
+			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(
+				map
+			);
+
+			marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+			marker
+				.bindPopup("<b>This is you!</b><br>Drag to desired position")
+				.openPopup();
+
+			marker.on("drag", (e) => {
+				const position = e.target.getLatLng();
+				document.getElementById("lat").value = position.lat;
+				document.getElementById("lng").value = position.lng;
+			});
+		}
 
 		loader.classList.toggle("hide");
 		document.getElementById("lat").value = lat;
 		document.getElementById("lng").value = lng;
-
-		marker.on("drag", (e) => {
-			const position = e.target.getLatLng();
-			document.getElementById("lat").value = position.lat;
-			document.getElementById("lng").value = position.lng;
-		});
 	};
 
-	if (user.lat && user.lng) {
-		setPosition(user.lat, user.lng);
+	if (lat && lng) {
+		setPosition(lat, lng);
 	} else if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
@@ -147,6 +192,30 @@ function initMap(user) {
 	}
 }
 
+// Add event listener to entryNameSelect to handle changes
+document
+	.getElementById("entryNameSelect")
+	.addEventListener("change", (event) => {
+		const selectedEntryName = event.target.value;
+
+		if (selectedEntryName) {
+			if (selectedEntryName === "add_new_entry") {
+				// Redirect to the '/new-entry' page
+				window.location.href = "/new-entry";
+			} else {
+				const selectedEntry = user.entry_id.find(
+					(entry) => entry[0].entryName === selectedEntryName
+				);
+
+				if (selectedEntry) {
+					entry = selectedEntry[0];
+					updateUserInterface(entry);
+					updateProfile(entry);
+				}
+			}
+		}
+	});
+
 document
 	.getElementById("userForm")
 	.addEventListener("submit", async (event) => {
@@ -155,30 +224,27 @@ document
 
 		const formData = {
 			user_id: user.id,
-			email: user.email,
-			phone: document.getElementById("phone").value,
-			name: document.getElementById("name").value,
-			childName: document.getElementById("childName").value, // Added childName
-			preference: document.getElementById("preferences").value,
+			user_email: user.email,
+			entryPhone: document.getElementById("phone").value,
+			entryName: document.getElementById("childName").value,
+			entryPreference: document.getElementById("preferences").value,
 			lat: parseFloat(document.getElementById("lat").value),
 			lng: parseFloat(document.getElementById("lng").value),
 			includedMap: document.getElementById("includedMap").checked,
 			includedDirectory: document.getElementById("includedDirectory").checked,
-			userFilterOne: document.getElementById("filterOne").value,
-			userFilterTwo: document.getElementById("filterTwo").value,
+			entryFilterOne: document.getElementById("filterOne").value,
+			entryFilterTwo: document.getElementById("filterTwo").value,
 		};
 
 		try {
-			console.log("update Tues 5:30");
 			const response = await fetch(
-				`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/user/${user.id}`,
+				`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/entry/${entry.id}`,
 				{
 					method: "PATCH",
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: localStorage.authToken,
 					},
-
 					body: JSON.stringify(formData),
 				}
 			);
@@ -193,10 +259,3 @@ document
 			console.error("There was an error updating the profile:", error);
 		}
 	});
-
-logOutBtn.addEventListener("click", () => {
-	console.log("click");
-	localStorage.clear();
-	alert("You are not logged in");
-	window.location.href = "/";
-});
