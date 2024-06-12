@@ -182,6 +182,8 @@ function initMap(entry) {
 		navigator.geolocation.getCurrentPosition(
 			(position) => {
 				setPosition(position.coords.latitude, position.coords.longitude);
+				document.getElementById("lat").value = position.coords.latitude;
+				document.getElementById("lng").value = position.coords.longitude;
 			},
 			() => {
 				alert("Geolocation is not supported by this browser.");
