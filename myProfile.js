@@ -4,6 +4,7 @@ if (localStorage.authToken) {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
 }
+console.log("Wed, 5:30pm");
 
 const logOutBtn = document.getElementById("logout-button");
 let user;
@@ -113,7 +114,7 @@ function populateEntryOptions(selectElement, options) {
 	// Adding the last item
 	const lastItem = document.createElement("option");
 	lastItem.value = "add_new_entry";
-	lastItem.textContent = "✳️ Add a new entry ✳️";
+	lastItem.textContent = "Add a new entry ✳️";
 	selectElement.appendChild(lastItem);
 }
 
