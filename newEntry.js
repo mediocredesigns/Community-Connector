@@ -39,7 +39,6 @@ async function populateSelect() {
 
 		const selectElement = document.getElementById("school");
 		data.forEach((org) => {
-			console.log(org);
 			const option = document.createElement("option");
 			option.value = org.OrgName;
 			option.textContent = org.OrgName;
@@ -67,7 +66,6 @@ async function sendToXano() {
 
 		const data = await response.json();
 		user = data;
-		console.log(data);
 		updateForm(data);
 		populateSelect();
 
@@ -97,7 +95,6 @@ document
 			orgName: document.getElementById("school").value,
 			orgKey: document.getElementById("schoolKey").value,
 		};
-		console.log("form data", formData);
 
 		fetch("https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/signup_entry", {
 			method: "POST",
@@ -109,7 +106,6 @@ document
 		})
 			.then((response) => {
 				if (response.ok) {
-					console.log("response", response);
 					return response.json();
 				} else {
 					return response.json().then((errorData) => {
@@ -127,8 +123,8 @@ document
 						"Passkey does not match organization.  Try again or contact your organization.";
 					warningModal.style.display = "flex";
 				} else {
-					const xanoResponse = data;
-					console.log("xanoResponse", xanoResponse);
+					// const xanoResponse = data;
+					// console.log("xanoResponse", xanoResponse);
 
 					document.getElementById("userForm").reset();
 					window.location.href = "/my-profile";

@@ -44,7 +44,6 @@ async function fetchUserEntries() {
 
 function populateSelectOptions(selectElement, options) {
 	selectElement.innerHTML = '<option value="">Select one...</option>';
-	console.log(options, "OPTIONS");
 
 	if (options && options.length) {
 		// Sort options alphabetically by entryName
@@ -82,7 +81,6 @@ async function fetchOrgData(entryID) {
 			return response.json();
 		})
 		.then((data) => {
-			console.log(data);
 			orgInfo = data;
 			orgLat = data.orgLat;
 			orgLng = data.orgLng;
@@ -101,8 +99,6 @@ entryNameSelect.addEventListener("change", async () => {
 });
 
 async function getDirectoryEntries(entryID) {
-	console.log("entry ID", entryID);
-
 	fetch(
 		`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getDirectoryEntries?entryID=${entryID}`,
 		{
@@ -129,8 +125,6 @@ async function getDirectoryEntries(entryID) {
 }
 
 async function getMapEntries(entryID) {
-	console.log("entry ID", entryID);
-
 	fetch(
 		`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/getMapEntries?entryID=${entryID}`,
 		{
@@ -159,7 +153,6 @@ function loadDirectory(users) {
 	let tableWrap = document.getElementById("table_wrap");
 	tableWrap.innerHTML = ""; // Clear previous content
 	document.getElementById("countInitial").textContent = users.length;
-	console.log("orginfo", orgInfo);
 
 	// Sort users alphabetically by entryName
 	users.sort((a, b) =>

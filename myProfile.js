@@ -31,13 +31,11 @@ async function sendToXano() {
 
 		const data = await response.json();
 		user = data;
-		console.log(user);
 
 		entry =
 			user.entry_id && user.entry_id.length && user.entry_id[0].length
 				? user.entry_id[0][0]
 				: null;
-		console.log(entry);
 		if (entry) {
 			updateUserInterface(entry);
 			updateProfile(entry);
@@ -256,8 +254,6 @@ document
 			setTimeout(() => {
 				document.getElementById("updatedText").style.opacity = 0;
 			}, 3000);
-
-			console.log("response", response);
 		} catch (error) {
 			console.error("There was an error updating the profile:", error);
 		}
