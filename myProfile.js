@@ -4,7 +4,7 @@ if (localStorage.authToken) {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
 }
-console.log("Wed, 5:30pm");
+console.log("Thurs, 5:30am");
 
 const logOutBtn = document.getElementById("logout-button");
 let user;
@@ -90,20 +90,15 @@ function updateUserInterface(entry) {
 	} else {
 		entryNameSelect.innerHTML = '<option value="">Select one...</option>';
 	}
-
-	const childNameWrapper = document
-		.getElementById("childName")
-		.closest(".form_field-wrapper");
-	if (!entry._organization.includeChild) {
-		childNameWrapper.classList.add("hide");
-	} else {
-		childNameWrapper.classList.remove("hide");
-	}
 }
 
 function populateEntryOptions(selectElement, options) {
 	selectElement.innerHTML = '<option value="">Select one...</option>';
+
 	if (options && options.length) {
+		// Sort options alphabetically
+		options.sort((a, b) => a.localeCompare(b));
+
 		options.forEach((option) => {
 			const optionElement = document.createElement("option");
 			optionElement.value = option;
@@ -111,6 +106,7 @@ function populateEntryOptions(selectElement, options) {
 			selectElement.appendChild(optionElement);
 		});
 	}
+
 	// Adding the last item
 	const lastItem = document.createElement("option");
 	lastItem.value = "add_new_entry";
@@ -120,7 +116,11 @@ function populateEntryOptions(selectElement, options) {
 
 function populateSelectOptions(selectElement, options) {
 	selectElement.innerHTML = '<option value="">Select one...</option>';
+
 	if (options && options.length) {
+		// Sort options alphabetically
+		options.sort((a, b) => a.localeCompare(b));
+
 		options.forEach((option) => {
 			const optionElement = document.createElement("option");
 			optionElement.value = option;

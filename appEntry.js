@@ -45,13 +45,18 @@ async function fetchUserEntries() {
 function populateSelectOptions(selectElement, options) {
 	selectElement.innerHTML = '<option value="">Select one...</option>';
 	console.log(options, "OPTIONS");
+
 	if (options && options.length) {
+		// Sort options alphabetically by entryName
+		options.sort((a, b) => a.entryName.localeCompare(b.entryName));
+
 		options.forEach((option) => {
 			const optionElement = document.createElement("option");
 			optionElement.value = option.id;
 			optionElement.textContent = option.entryName;
 			selectElement.appendChild(optionElement);
 		});
+
 		let firstOption = options[0].id;
 		selectElement.value = firstOption;
 		getDirectoryEntries(firstOption);
@@ -155,7 +160,8 @@ function loadDirectory(users) {
 	tableWrap.innerHTML = ""; // Clear previous content
 	document.getElementById("countInitial").textContent = users.length;
 	console.log("orginfo", orgInfo);
-	// Sort users alphabetically by name
+
+	// Sort users alphabetically by entryName
 	users.sort((a, b) =>
 		a.entryName.toLowerCase().localeCompare(b.entryName.toLowerCase())
 	);
@@ -179,25 +185,19 @@ function loadDirectory(users) {
         </div>`
 		: "";
 
-	// Create "Student's Name" column header if includeChild is true
-	let columnHeaderChild = orgInfo.includeChild
-		? `
-        <div role="columnheader" class="table4_column is-header-column">
-            <a fs-cmssort-desc="is-desc" fs-cmssort-element="trigger" fs-cmssort-field="IDENTIFIER" fs-cmssort-asc="is-asc" href="#" class="table4_header-link w-inline-block">
-                <div id="childNameLabel" class="text-weight-semibold">Student</div>
-            </a>
-        </div>`
-		: "";
-
 	// Create row header
 	let rowHeader = `
         <div class="table4_header-row">
             <div role="columnheader" class="table4_column is-header-column">
                 <a fs-cmssort-desc="is-desc" fs-cmssort-element="trigger" fs-cmssort-field="IDENTIFIER" fs-cmssort-asc="is-asc" href="#" class="table4_header-link w-inline-block">
-                    <div class="text-weight-semibold">Name</div>
+                    <div class="text-weight-semibold">Community Member</div>
                 </a>
             </div>
-            ${columnHeaderChild}
+            <div role="columnheader" class="table4_column is-header-column">
+                <a fs-cmssort-desc="is-desc" fs-cmssort-element="trigger" fs-cmssort-field="IDENTIFIER" fs-cmssort-asc="is-asc" href="#" class="table4_header-link w-inline-block">
+                    <div class="text-weight-semibold">Contact Name</div>
+                </a>
+            </div>
             <div role="columnheader" class="table4_column is-header-column">
                 <a fs-cmssort-desc="is-desc" fs-cmssort-element="trigger" fs-cmssort-field="IDENTIFIER" fs-cmssort-asc="is-asc" href="#" class="table4_header-link w-inline-block">
                     <div class="text-weight-semibold">Email</div>
@@ -239,25 +239,19 @@ function loadDirectory(users) {
             </div>`
 			: "";
 
-		// Create "Student's Name" cell if includeChild is true
-		let childNameInsert = orgInfo.includeChild
-			? `
-            <div role="cell" class="table4_column">
-                <div id="childNameText" fs-cmsfilter-field="childName">
-                    ${entryName || "Not Listed"}
-                </div>
-            </div>`
-			: "";
-
 		// Create HTML for the user row
 		let htmlInsert = `
             <div role="row" class="table4_item">
+                <div role="cell" class="table4_column">
+                    <div id="entryNameText" fs-cmsfilter-field="entryName">
+                        ${entryName || "Not Listed"}
+                    </div>
+                </div>
                 <div role="cell" class="table4_column">
                     <div id="nameText" fs-cmsfilter-field="name" class="text-weight-medium">
                         ${name}
                     </div>
                 </div>
-                ${childNameInsert}
                 <div role="cell" class="table4_column">
                     <div id="emailText">
                         ${email || "Not Listed"}
