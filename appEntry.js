@@ -28,7 +28,7 @@ async function fetchUserEntries() {
 		.then((data) => {
 			let entryID = data[0].id;
 			entries = data;
-
+			console.log(data);
 			if (entries.length) {
 				populateSelectOptions(entryNameSelect, entries);
 			} else {
@@ -52,7 +52,7 @@ function populateSelectOptions(selectElement, options) {
 		options.forEach((option) => {
 			const optionElement = document.createElement("option");
 			optionElement.value = option.id;
-			optionElement.textContent = option.entryName;
+			optionElement.textContent = `${option.entryName} (${option._organization.OrgName})`;
 			selectElement.appendChild(optionElement);
 		});
 

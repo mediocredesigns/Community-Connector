@@ -31,7 +31,7 @@ async function sendToXano() {
 
 		const data = await response.json();
 		user = data;
-
+		console.log(user);
 		entry =
 			user.entry_id && user.entry_id.length && user.entry_id[0].length
 				? user.entry_id[0][0]
@@ -82,25 +82,30 @@ function updateUserInterface(entry) {
 
 	let entryArray = user.entry_id;
 	let entryArrayNames = entryArray.map((entry) => entry[0].entryName);
+	let entryOrgs = entryArray.map((entry) => entry[0]._organization.OrgName);
+
+	let combinedEntries = entryArrayNames.map(
+		(name, index) => `${name} (${entryOrgs[index]})`
+	);
 
 	if (entryArrayNames.length) {
-		populateEntryOptions(entryNameSelect, entryArrayNames);
+		populateEntryOptions(entryNameSelect, entryOrgs, entryArrayNames);
 	} else {
 		entryNameSelect.innerHTML = '<option value="">Select one...</option>';
 	}
 }
 
-function populateEntryOptions(selectElement, options) {
+function populateEntryOptions(selectElement, entryOrgs, options) {
 	selectElement.innerHTML = '<option value="">Select one...</option>';
 
 	if (options && options.length) {
-		// Sort options alphabetically
 		options.sort((a, b) => a.localeCompare(b));
 
-		options.forEach((option) => {
+		options.forEach((option, index) => {
+			console.log(option);
 			const optionElement = document.createElement("option");
 			optionElement.value = option;
-			optionElement.textContent = option;
+			optionElement.textContent = `${option} (${entryOrgs[index]})`;
 			selectElement.appendChild(optionElement);
 		});
 	}
