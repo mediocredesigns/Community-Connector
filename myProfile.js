@@ -4,7 +4,7 @@ if (localStorage.authToken) {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
 }
-console.log("Thurs, 5:30am");
+console.log("Wed, 5:30am");
 
 const logOutBtn = document.getElementById("logout-button");
 let user;
@@ -31,7 +31,6 @@ async function sendToXano() {
 
 		const data = await response.json();
 		user = data;
-		console.log(user);
 		entry =
 			user.entry_id && user.entry_id.length && user.entry_id[0].length
 				? user.entry_id[0][0]
@@ -102,7 +101,6 @@ function populateEntryOptions(selectElement, entryOrgs, options) {
 		options.sort((a, b) => a.localeCompare(b));
 
 		options.forEach((option, index) => {
-			console.log(option);
 			const optionElement = document.createElement("option");
 			optionElement.value = option;
 			optionElement.textContent = `${option} (${entryOrgs[index]})`;

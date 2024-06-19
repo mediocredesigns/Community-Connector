@@ -28,7 +28,6 @@ async function fetchUserEntries() {
 		.then((data) => {
 			let entryID = data[0].id;
 			entries = data;
-			console.log(data);
 			if (entries.length) {
 				populateSelectOptions(entryNameSelect, entries);
 			} else {
