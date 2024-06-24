@@ -4,8 +4,6 @@ if (localStorage.authToken) {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
 }
-console.log("Wed, 5:30am");
-
 const logOutBtn = document.getElementById("logout-button");
 let user;
 let entry;
@@ -30,7 +28,15 @@ async function sendToXano() {
 		}
 
 		const data = await response.json();
+		console.log("Data", data);
 		user = data;
+
+		if (!user.entry_id[0]) {
+			console.log("No entries");
+			document.getElementById("welcome-toggle").style.display = "none";
+			document.getElementById("profile-toggle").style.display = "none";
+			document.getElementById("entry-toggle").style.display = "flex";
+		}
 		entry =
 			user.entry_id && user.entry_id.length && user.entry_id[0].length
 				? user.entry_id[0][0]
@@ -39,6 +45,7 @@ async function sendToXano() {
 			updateUserInterface(entry);
 			updateProfile(entry);
 		}
+		console.log(entry);
 	} catch (error) {
 		console.error("There was a problem with the fetch operation:", error);
 	}

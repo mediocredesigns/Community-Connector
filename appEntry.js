@@ -1,5 +1,6 @@
 if (localStorage.authToken) {
 	fetchUserEntries();
+	console.log("Monday, 9am");
 } else {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
@@ -57,6 +58,10 @@ function populateSelectOptions(selectElement, options) {
 
 		let firstOption = options[0].id;
 		selectElement.value = firstOption;
+		const lastItem = document.createElement("option");
+		lastItem.value = "add_new_entry";
+		lastItem.textContent = "Add a new entry ✳️";
+		selectElement.appendChild(lastItem);
 		getDirectoryEntries(firstOption);
 		getMapEntries(firstOption);
 	}
@@ -92,9 +97,13 @@ async function fetchOrgData(entryID) {
 }
 
 entryNameSelect.addEventListener("change", async () => {
-	await fetchOrgData(entryNameSelect.value);
-	await getMapEntries(entryNameSelect.value);
-	await getDirectoryEntries(entryNameSelect.value);
+	if (entryNameSelect.value === "add_new_entry") {
+		window.location.href = "/new-entry";
+	} else {
+		await fetchOrgData(entryNameSelect.value);
+		await getMapEntries(entryNameSelect.value);
+		await getDirectoryEntries(entryNameSelect.value);
+	}
 });
 
 async function getDirectoryEntries(entryID) {
