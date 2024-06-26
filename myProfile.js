@@ -1,5 +1,6 @@
 if (localStorage.authToken) {
 	sendToXano();
+	console.log("Wed, 6am)");
 } else {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
@@ -30,6 +31,7 @@ async function sendToXano() {
 		const data = await response.json();
 		console.log("Data", data);
 		user = data;
+		document.getElementById("userName").innerHTML = user.name;
 
 		if (!user.entry_id[0]) {
 			console.log("No entries");
@@ -52,8 +54,6 @@ async function sendToXano() {
 }
 
 function updateUserInterface(entry) {
-	document.getElementById("userName").innerHTML = user.name;
-
 	if (entry._organization.OrgName) {
 		const orgName = entry._organization.OrgName;
 		document.getElementById("userOrganization").innerText =
