@@ -1,0 +1,1 @@
+This project developed the entirety of the app that can be found at connector.community, and provides a solution for schools and organizations looking for ways to help their organization members connect.  Includes interactive map, searchable databse, and easily editable individual user profiles.
