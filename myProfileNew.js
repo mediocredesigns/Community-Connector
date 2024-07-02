@@ -1,6 +1,6 @@
 if (localStorage.authToken) {
-	sendToXano();
-	console.log("Tues, 11am)");
+	getProfileEntries();
+	console.log("Wed, 6am)");
 } else {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
@@ -10,11 +10,12 @@ let user;
 let entry;
 let map; // Declare the map variable at the top level
 let marker; // Declare the marker variable at the top level
+const entryNameSelect = document.getElementById("entryNameSelect");
 
-async function sendToXano() {
+async function getProfileEntries() {
 	try {
 		const response = await fetch(
-			"https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/me_entries",
+			"https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/auth/me_getProfileEntries",
 			{
 				method: "GET",
 				headers: {
@@ -29,25 +30,60 @@ async function sendToXano() {
 		}
 
 		const data = await response.json();
-		user = data;
-		document.getElementById("userName").innerHTML = user.name;
 
-		if (!user.entry_id[0]) {
+		// document.getElementById("userName").innerHTML = user.name;
+		if (!data[0].entry_id[0]) {
+			console.log("No entries");
 			document.getElementById("welcome-toggle").style.display = "none";
 			document.getElementById("profile-toggle").style.display = "none";
 			document.getElementById("entry-toggle").style.display = "flex";
+		} else {
+			populateEntryOptions(entryNameSelect, data[0].entry_id);
 		}
-		entry =
-			user.entry_id && user.entry_id.length && user.entry_id[0].length
-				? user.entry_id[0][0]
-				: null;
-		if (entry) {
-			updateUserInterface(entry);
-			updateProfile(entry);
-		}
+		// 	entry =
+		// 	user.entry_id && user.entry_id.length && user.entry_id[0].length
+		// 		? user.entry_id[0][0]
+		// 		: null;
+		// if (entry) {
+		// 	// updateUserInterface(entry);
+		// 	// updateProfile(entry);
+		// }
 	} catch (error) {
 		console.error("There was a problem with the fetch operation:", error);
 	}
+}
+
+function populateEntryOptions(selectElement, data) {
+	selectElement.innerHTML = '<option value="">Select one...</option>';
+	console.log("Entery data", data);
+	let entryArrayNames = data.map((entry) => [
+		entry[0].entryName,
+		entry[0]._organization.OrgName,
+	]);
+	console.log("ENTRY ARRAY NAMES", entryArrayNames);
+	let entryOrgs = data.map((entry) => entry[0]._organization.OrgName);
+	let entryIDs = data.map((entry) => entry[0].id);
+
+	let options = data.map((entry) => [
+		`${entry[0].entryName} (${entry[0]._organization.OrgName}`,
+		`${entry[0].entryName}`,
+	]);
+
+	if (options && options.length) {
+		options.forEach((option, index) => {
+			console.log(option);
+			const optionElement = document.createElement("option");
+			optionElement.value = option[1];
+			optionElement.textContent = `${option[0]}`;
+			selectElement.appendChild(optionElement);
+		});
+	}
+	const lastItem = document.createElement("option");
+	lastItem.value = "add_new_entry";
+	lastItem.textContent = "Add a new entry ✳️";
+	selectElement.appendChild(lastItem);
+	selectElement.value = options[0];
+	updateUserInterface(options[0]);
 }
 
 function updateUserInterface(entry) {
@@ -65,8 +101,6 @@ function updateUserInterface(entry) {
 	const filterTwo = document.getElementById("filterTwo");
 	const filterTwoWrapper = document.getElementById("filterTwoWrapper");
 
-	const entryNameSelect = document.getElementById("entryNameSelect");
-
 	if (entry._organization.orgFilterOne) {
 		filterOneLabel.innerHTML = entry._organization.orgFilterOne;
 		populateSelectOptions(filterOne, entry._organization.filterOneOptions);
@@ -82,40 +116,6 @@ function updateUserInterface(entry) {
 	} else {
 		filterTwoWrapper.classList.add("hide");
 	}
-
-	let entryArray = user.entry_id;
-	let entryArrayNames = entryArray.map((entry) => entry[0].entryName);
-	let entryOrgs = entryArray.map((entry) => entry[0]._organization.OrgName);
-
-	let combinedEntries = entryArrayNames.map(
-		(name, index) => `${name} (${entryOrgs[index]})`
-	);
-
-	if (entryArrayNames.length) {
-		populateEntryOptions(entryNameSelect, entryOrgs, entryArrayNames);
-	} else {
-		entryNameSelect.innerHTML = '<option value="">Select one...</option>';
-	}
-}
-
-function populateEntryOptions(selectElement, entryOrgs, options) {
-	selectElement.innerHTML = '<option value="">Select one...</option>';
-
-	if (options && options.length) {
-		options.forEach((option, index) => {
-			const optionElement = document.createElement("option");
-			optionElement.value = option;
-			optionElement.textContent = `${option} (${entryOrgs[index]})`;
-			selectElement.appendChild(optionElement);
-		});
-	}
-
-	// Adding the last item
-	const lastItem = document.createElement("option");
-	lastItem.value = "add_new_entry";
-	lastItem.textContent = "Add a new entry ✳️";
-	selectElement.appendChild(lastItem);
-	selectElement.value = options[0];
 }
 
 function populateSelectOptions(selectElement, options) {
