@@ -20,6 +20,7 @@ async function initializePage() {
 		}
 
 		const initialEntryID = data[0].id;
+		orgTitle = data[0]._organization.OrgName;
 
 		entryNameSelect.addEventListener("change", async () => {
 			if (entryNameSelect.value === "add_new_entry") {

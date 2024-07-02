@@ -72,7 +72,7 @@ function updateUserInterface(entry) {
 		populateSelectOptions(filterOne, entry._organization.filterOneOptions);
 		filterOne.value = entry.entryFilterOne;
 	} else {
-		filterOneWrapper.classList.add("hide");
+		filterOneWrapper.classList.toggle("hide");
 	}
 
 	if (entry._organization.orgFilterTwo) {
@@ -80,7 +80,7 @@ function updateUserInterface(entry) {
 		populateSelectOptions(filterTwo, entry._organization.filterTwoOptions);
 		filterTwo.value = entry.entryFilterTwo;
 	} else {
-		filterTwoWrapper.classList.add("hide");
+		filterTwoWrapper.classList.toggle("hide");
 	}
 
 	let entryArray = user.entry_id;
