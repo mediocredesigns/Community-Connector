@@ -1,6 +1,6 @@
 if (localStorage.authToken) {
 	sendToXano();
-	console.log("Tues, 11am)");
+	console.log("Tues, 12am)");
 } else {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
@@ -71,16 +71,18 @@ function updateUserInterface(entry) {
 		filterOneLabel.innerHTML = entry._organization.orgFilterOne;
 		populateSelectOptions(filterOne, entry._organization.filterOneOptions);
 		filterOne.value = entry.entryFilterOne;
+		filterOneWrapper.classList.remove("hide");
 	} else {
-		filterOneWrapper.classList.toggle("hide");
+		filterOneWrapper.classList.add("hide");
 	}
 
 	if (entry._organization.orgFilterTwo) {
 		filterTwoLabel.innerHTML = entry._organization.orgFilterTwo;
 		populateSelectOptions(filterTwo, entry._organization.filterTwoOptions);
 		filterTwo.value = entry.entryFilterTwo;
+		filterTwoWrapper.classList.remove("hide");
 	} else {
-		filterTwoWrapper.classList.toggle("hide");
+		filterTwoWrapper.classList.add("hide");
 	}
 
 	let entryArray = user.entry_id;
