@@ -8,6 +8,7 @@ if (localStorage.authToken) {
 const entryNameSelect = document.getElementById("entryNameSelect");
 let map;
 let orgTitle, fullData;
+console.log("hi from tuesday");
 
 async function initializePage() {
 	try {
@@ -74,6 +75,7 @@ async function fetchEntryData(entryID) {
 		const data = await response.json();
 		document.getElementById("orgTitle").innerText =
 			data[0]._organization.OrgName;
+		orgTitle = data[0]._organization.OrgName;
 		const directoryEntries = data.filter((item) => item.includedDirectory);
 		const mapEntries = data.filter((item) => item.includedMap);
 		fullData = directoryEntries;
