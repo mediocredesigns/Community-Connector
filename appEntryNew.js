@@ -6,9 +6,7 @@ if (localStorage.authToken) {
 }
 
 const entryNameSelect = document.getElementById("entryNameSelect");
-let map;
-let orgTitle, fullData;
-console.log("hi from tuesday");
+let map, orgTitle, fullData;
 
 async function initializePage() {
 	try {
@@ -227,7 +225,7 @@ function loadMap(users) {
 		map = L.map("map");
 	}
 
-	map.setView([orgInfo.orgLat, orgInfo.orgLng], 13); // Recenter the map
+	map.setView([orgInfo.orgLat, orgInfo.orgLng], 13);
 
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 		maxZoom: 19,
