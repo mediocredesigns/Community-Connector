@@ -213,8 +213,12 @@ function loadDirectory(users) {
 	});
 }
 
+let controlOne, controlTwo, filterButton; // Declare controls globally
+
 function loadMap(users) {
-	let orgInfo = users[0]._organization;
+	console.log(users);
+
+	// Initialize map and layers
 	if (map) {
 		map.eachLayer(function (layer) {
 			if (layer !== map) {
@@ -225,6 +229,7 @@ function loadMap(users) {
 		map = L.map("map");
 	}
 
+	let orgInfo = users[0]._organization;
 	map.setView([orgInfo.orgLat, orgInfo.orgLng], 13);
 
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -245,6 +250,21 @@ function loadMap(users) {
 	}).addTo(map);
 	layer.bindPopup(`This is ${orgInfo.OrgName}!`).openPopup();
 
+	// Remove existing filter controls if they exist
+	if (controlOne) {
+		map.removeControl(controlOne);
+	}
+	if (controlTwo) {
+		map.removeControl(controlTwo);
+	}
+	if (filterButton) {
+		map.removeControl(filterButton);
+	}
+
+	// Objects to store layer groups for each unique filter
+	let filterOneGroups = {};
+	let filterTwoGroups = {};
+
 	users.forEach((item) => {
 		const name = item._user.name;
 		const email = item._user.email;
@@ -264,7 +284,6 @@ function loadMap(users) {
 
 		let phoneInsert = entryPhone ? `<b>Phone:</b> ${entryPhone}<br>` : "";
 		let emailInsert = email ? `<b>Email:</b> ${email}<br>` : "";
-
 		let filterOneInsert = entryFilterOne
 			? `<b>${orgInfo.orgFilterOne}:</b> ${entryFilterOne}<br>`
 			: "";
@@ -280,13 +299,81 @@ function loadMap(users) {
             <div class="spacer-xxsmall"></div>
             <div>${childInsert}</div>
             <div>${filterOneInsert}</div>
-<div>${filterTwoInsert}</div>
-
+            <div>${filterTwoInsert}</div>
             <div class="spacer-xxsmall"></div>
             <div><b>Preference:</b><br> ${entryPreference}</div>`;
 
-		newMarker.addTo(map).bindPopup(popUpInsert);
+		newMarker.bindPopup(popUpInsert);
+
+		// Add marker to the appropriate filter group
+		if (entryFilterOne) {
+			if (!filterOneGroups[entryFilterOne]) {
+				filterOneGroups[entryFilterOne] = L.layerGroup().addTo(map);
+			}
+			newMarker.addTo(filterOneGroups[entryFilterOne]);
+		} else {
+			newMarker.addTo(map);
+		}
+
+		if (entryFilterTwo) {
+			if (!filterTwoGroups[entryFilterTwo]) {
+				filterTwoGroups[entryFilterTwo] = L.layerGroup().addTo(map);
+			}
+			newMarker.addTo(filterTwoGroups[entryFilterTwo]);
+		} else {
+			newMarker.addTo(map);
+		}
 	});
+
+	// Create filter control for filterOne
+	let filterOneOverlays = {};
+	for (let filter in filterOneGroups) {
+		let label = `${orgInfo.orgFilterOne}: ${filter}`;
+		filterOneOverlays[label] = filterOneGroups[filter];
+	}
+
+	// Create filter control for filterTwo
+	let filterTwoOverlays = {};
+	for (let filter in filterTwoGroups) {
+		let label = `${orgInfo.orgFilterTwo}: ${filter}`;
+		filterTwoOverlays[label] = filterTwoGroups[filter];
+	}
+
+	// Add control layer for the filters with collapsed: true
+	controlOne = L.control
+		.layers(null, filterOneOverlays, { position: "topright", collapsed: true })
+		.addTo(map);
+	controlTwo = L.control
+		.layers(null, filterTwoOverlays, { position: "topright", collapsed: true })
+		.addTo(map);
+
+	// Hide the controls initially
+	controlOne._container.style.display = "none";
+	controlTwo._container.style.display = "none";
+
+	// Create filter button
+	filterButton = L.control({ position: "topleft" });
+	filterButton.onAdd = function (map) {
+		let div = L.DomUtil.create(
+			"div",
+			"leaflet-bar leaflet-control leaflet-control-custom"
+		);
+		div.innerHTML =
+			'<button style="background-color: white; border: 2px solid black; color: black; padding: 5px 10px; font-size: 14px;">Filters</button>';
+		div.style.backgroundColor = "transparent";
+		div.style.cursor = "pointer";
+		div.style.border = "none";
+
+		div.onclick = function () {
+			let display =
+				controlOne._container.style.display === "none" ? "block" : "none";
+			controlOne._container.style.display = display;
+			controlTwo._container.style.display = display;
+		};
+
+		return div;
+	};
+	filterButton.addTo(map);
 }
 
 const searchForm = document.getElementById("search-form");
