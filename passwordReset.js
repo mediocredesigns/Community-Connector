@@ -104,7 +104,6 @@ document
 				return response.json();
 			})
 			.then((data) => {
-				console.log("Password updated successfully:", data);
 				document.getElementById("pw-update-text").style.opacity = 1;
 				setTimeout(() => {
 					document.getElementById("pw-update-text").style.opacity = 0;
