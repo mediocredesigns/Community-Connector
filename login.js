@@ -7,6 +7,8 @@ window.onload = function () {
 	}
 };
 
+console.log("AUGUST");
+
 document
 	.getElementById("login-form")
 	.addEventListener("submit", function (event) {
@@ -46,6 +48,7 @@ document
 				toggleButtons();
 				document.getElementById("login-modal-mobile").style.display = "none";
 				document.getElementById("login-modal").style.display = "none";
+				window.location.href = "/connect";
 			})
 			.catch((error) => {
 				alert("That email and/or password does not match our records");
@@ -92,6 +95,7 @@ document
 				toggleButtons();
 				document.getElementById("login-modal-mobile").style.display = "none";
 				document.getElementById("login-modal").style.display = "none";
+				window.location.href = "/connect";
 			})
 			.catch((error) => {
 				alert("That email and/or password does not match our records");
