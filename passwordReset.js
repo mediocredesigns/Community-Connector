@@ -39,6 +39,7 @@ function performFetch(magicToken) {
 		})
 		.then((data) => {
 			const authToken = data;
+			console.log(authToken);
 			localStorage.setItem("authToken", authToken);
 			location.reload();
 		})
@@ -79,25 +80,42 @@ document
 
 		let password = document.getElementById("passwordReset1").value;
 
+		const formData = {
+			email: user.email,
+			password: password,
+			user_id: user.id,
+		};
+
+		console.log(JSON.stringify(formData));
+
 		fetch(`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/user/${user.id}/pw`, {
 			method: "PATCH",
 			headers: {
 				"Content-Type": "application/json",
+				Authorization: localStorage.authToken,
 			},
-			body: JSON.stringify({
-				user_id: user.id,
-				email: user.email,
-				password: password,
-			}),
+			body: JSON.stringify(formData),
 		})
 			.then((response) => {
+				if (!response.ok) {
+					return response.json().then((errorData) => {
+						// Display server error message, if available
+						console.error("Server Error:", errorData);
+						throw new Error("Network response was not ok");
+					});
+				}
+				console.log("Response", response);
+				return response.json();
+			})
+			.then((data) => {
+				console.log("Password updated successfully:", data);
 				document.getElementById("pw-update-text").style.opacity = 1;
 				setTimeout(() => {
 					document.getElementById("pw-update-text").style.opacity = 0;
 				}, 2000);
-				window.location.href = "/my-profile";
+				// window.location.href = "/my-profile";
 			})
 			.catch((error) => {
-				// Handle error
+				console.error("There was a problem with the fetch operation:", error);
 			});
 	});
