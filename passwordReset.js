@@ -39,7 +39,6 @@ function performFetch(magicToken) {
 		})
 		.then((data) => {
 			const authToken = data;
-			console.log(authToken);
 			localStorage.setItem("authToken", authToken);
 			location.reload();
 		})
@@ -86,8 +85,6 @@ document
 			user_id: user.id,
 		};
 
-		console.log(JSON.stringify(formData));
-
 		fetch(`https://x8ki-letl-twmt.n7.xano.io/api:BEPCmi3D/user/${user.id}/pw`, {
 			method: "PATCH",
 			headers: {
@@ -104,7 +101,6 @@ document
 						throw new Error("Network response was not ok");
 					});
 				}
-				console.log("Response", response);
 				return response.json();
 			})
 			.then((data) => {
