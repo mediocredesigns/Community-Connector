@@ -216,8 +216,6 @@ function loadDirectory(users) {
 let controlOne, controlTwo, filterButton; // Declare controls globally
 
 function loadMap(users) {
-	console.log(users);
-
 	// Initialize map and layers
 	if (map) {
 		map.eachLayer(function (layer) {

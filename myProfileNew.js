@@ -1,6 +1,6 @@
 if (localStorage.authToken) {
 	getProfileEntries();
-	console.log("Wed, 6am)");
+	console.log("August Update)");
 } else {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
@@ -55,12 +55,10 @@ async function getProfileEntries() {
 
 function populateEntryOptions(selectElement, data) {
 	selectElement.innerHTML = '<option value="">Select one...</option>';
-	console.log("Entery data", data);
 	let entryArrayNames = data.map((entry) => [
 		entry[0].entryName,
 		entry[0]._organization.OrgName,
 	]);
-	console.log("ENTRY ARRAY NAMES", entryArrayNames);
 	let entryOrgs = data.map((entry) => entry[0]._organization.OrgName);
 	let entryIDs = data.map((entry) => entry[0].id);
 
@@ -71,7 +69,6 @@ function populateEntryOptions(selectElement, data) {
 
 	if (options && options.length) {
 		options.forEach((option, index) => {
-			console.log(option);
 			const optionElement = document.createElement("option");
 			optionElement.value = option[1];
 			optionElement.textContent = `${option[0]}`;
