@@ -7,7 +7,7 @@ window.onload = function () {
 	}
 };
 
-console.log("AUGUST");
+console.log("redirect");
 
 document
 	.getElementById("login-form")
