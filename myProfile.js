@@ -1,6 +1,6 @@
 if (localStorage.authToken) {
 	sendToXano();
-	console.log("Tues, 12am)");
+	console.log("Updated: August 18)");
 } else {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
@@ -262,6 +262,7 @@ document
 			setTimeout(() => {
 				document.getElementById("updatedText").style.opacity = 0;
 			}, 3000);
+			window.location.href = "/connect";
 		} catch (error) {
 			console.error("There was an error updating the profile:", error);
 		}
