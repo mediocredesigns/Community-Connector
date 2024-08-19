@@ -1,6 +1,6 @@
 if (localStorage.authToken) {
 	getProfileEntries();
-	console.log("August Update)");
+	console.log("August 18 Update)");
 } else {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
@@ -257,6 +257,7 @@ document
 			setTimeout(() => {
 				document.getElementById("updatedText").style.opacity = 0;
 			}, 3000);
+			window.location.href = "/connect";
 		} catch (error) {
 			console.error("There was an error updating the profile:", error);
 		}
