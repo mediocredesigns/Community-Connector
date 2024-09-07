@@ -1,6 +1,6 @@
 if (localStorage.authToken) {
 	sendToXano();
-	console.log("Updated: August 18)");
+	console.log("Updated: Sept 3, PM)");
 } else {
 	alert("You must be logged in to access this page");
 	window.location.href = "/";
@@ -193,7 +193,9 @@ function initMap(entry) {
 				document.getElementById("lng").value = position.coords.longitude;
 			},
 			() => {
-				alert("Geolocation is not supported by this browser.");
+				setPosition(entry._organization.orgLat, entry._organization.orgLng);
+				document.getElementById("lat").value = entry._organization.orgLat;
+				document.getElementById("lng").value = entry._organization.orgLng;
 			}
 		);
 	} else {
